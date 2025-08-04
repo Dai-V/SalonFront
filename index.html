@@ -1,0 +1,27 @@
+<head>
+      <title>My Page</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+</head>
+<body>
+<div class="schedule-container">
+    <div class="schedule-header">
+        <h2>Daily Schedule - <span id="currentDate"></span></h2>
+        <div class="navigation-buttons">
+            <button id="prevDay">Previous Day</button>
+            <button id="nextDay">Next Day</button>
+        </div>
+    </div>
+    <div class="schedule-grid">
+        <div class="time-container">
+            <div class="time-column">
+ <!-- Time slots will be dynamically generated here -->
+            </div>
+        </div>
+        <div class="resources-container" id="resourcesContainer">
+            <!-- Resource columns will be dynamically generated here -->
+        </div>
+    </div>
+</div>
+ <script src="script.js"></script>
+</body>
