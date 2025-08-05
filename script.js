@@ -1,11 +1,12 @@
 const currentDateElement = document.getElementById('currentDate');
 const prevDayButton = document.getElementById('prevDay');
 const nextDayButton = document.getElementById('nextDay');
-var token = document.getElementsByName("csrfToken").value;
 const TimeSlotHeight = 160 // per hour, 40 per 15 minutes
 
 let currentDisplayedDate = new Date(); 
 // Initialize with today's date
+
+
 
 
 
@@ -37,9 +38,10 @@ function generateResources() {
       $.ajax({
         url: "http://127.0.0.1:8000/api/technicians/",
         method: "GET",
-        headers: { "Accept": "application/json; odata=verbose" ,
-            "X-CSRF-Token": token 
-        },
+       
+xhrFields: {
+    withCredentials: true 
+  },
         success: function (data) {
             for (const tech in data) {
             console.log(data[tech])
@@ -63,7 +65,7 @@ function generateResources() {
         updateSchedule(currentDisplayedDate)
         }},
         error: function (data) {
-            failure(data);
+            console.log(data);
         }   
     });
     
@@ -85,9 +87,11 @@ function renderEvents(date) {
     $.ajax({
         url: "http://127.0.0.1:8000/api/appointments/?Date="+formattedDate,
         method: "GET",
-        headers: { "Accept": "application/json; odata=verbose" ,
-            "X-CSRF-Token": token 
-        },
+       
+        xhrFields: {
+    withCredentials: true 
+  },
+        
         success: function (data) {
             for (const app in data) {
                 console.log(data[app])
@@ -95,13 +99,11 @@ function renderEvents(date) {
                     schedule = data[app].Services[service]
                     const resourceColumn = document.querySelector(`.resource-column[id="${schedule.TechID}"]`)
                      if (resourceColumn) {
-                        console.log("Damn")
                         const eventDiv = document.createElement('div');
                         eventDiv.classList.add('event');
                         eventDiv.textContent = schedule['ServiceName'];
                         const startHour = parseInt(schedule['ServiceStartTime'].split(':')[0]);
                         const startMinute = parseInt(schedule['ServiceStartTime'].split(':')[1]);
-                        console.log(startHour)
     
                         const startPosition = (startHour * TimeSlotHeight) + (startMinute / 15 * TimeSlotHeight); // 40px per 15 minutes
                         const durationInMinutes = schedule['ServiceDuration']
@@ -115,7 +117,7 @@ function renderEvents(date) {
         
         }},
         error: function (data) {
-            failure(data);
+            console.log(data);
         }   
     });
     // 
@@ -151,15 +153,81 @@ function updateSchedule(date) {
 // Navigation
 prevDayButton.addEventListener('click', () => {
     currentDisplayedDate.setDate(currentDisplayedDate.getDate() - 1);
-    updateSchedule(currentDisplayedDate);
+    generateResources()
 });
 
 nextDayButton.addEventListener('click', () => {
     currentDisplayedDate.setDate(currentDisplayedDate.getDate() + 1);
-    updateSchedule(currentDisplayedDate);
+    generateResources()
 });
 
 // Initial load
 generateTimeSlots();
 generateResources();
 
+
+
+function openForm() {
+        var loginBtnText = document.querySelector('[id="login-form-open-button"]');
+        if( loginBtnText.textContent == `Logout`){
+         $.ajax({
+        type: "POST",
+        url: 'http://127.0.0.1:8000/api/logout',
+       headers: {
+    'X-CSRFTOKEN': Cookies.get('csrftoken'),
+        },
+        xhrFields: {
+            withCredentials: true 
+        },
+        success: function(data)
+        {  
+          var loginBtnText = document.querySelector('[id="login-form-open-button"]');
+          loginBtnText.textContent = `Login`
+          closeForm()
+          generateResources();
+        },
+        error: function(data){
+            console.log(data)
+        }
+    });
+    }
+    else {
+          document.getElementById("myForm").style.display = "block";
+    }
+}
+
+function closeForm() {
+  document.getElementById("myForm").style.display = "none";
+}
+
+// this is the id of the form
+$("#login-form").submit(function(e) {
+
+    e.preventDefault(); 
+
+    var form = $(this);
+    
+    $.ajax({
+        type: "POST",
+        url: 'http://127.0.0.1:8000/api/login',
+         headers: {
+    'X-CSRFTOKEN': Cookies.get('csrftoken'),
+        },
+         xhrFields: {
+            withCredentials: true 
+        },
+
+        data: form.serialize(),
+        success: function(data)
+        {  
+          var loginBtnText = document.querySelector('[id="login-form-open-button"]');
+          loginBtnText.textContent = `Logout`
+          closeForm()
+          generateResources();
+        },
+        error: function(data){
+            console.log(data)
+        }
+    });
+    
+});
