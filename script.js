@@ -148,6 +148,7 @@ function renderEvents(date) {
 function updateSchedule(date) {
     currentDateElement.textContent = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
     renderEvents(date);
+    console.log(Cookies.get('csrftoken'))
 }
 
 // Navigation
@@ -164,6 +165,7 @@ nextDayButton.addEventListener('click', () => {
 // Initial load
 generateTimeSlots();
 generateResources();
+console.log(Cookies.get('csrftoken'))
 
 
 
