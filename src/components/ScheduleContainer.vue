@@ -1,13 +1,15 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref,h } from 'vue'
 import LoginForm from './LoginForm.vue';
 
 
-const TimeSlotHeight = 160 // per hour, 40 per 15 minutes
+
+const TimeSlotHeight = 40
 
 let currentDisplayedDate = new Date(); 
 let currentDate = ref(null)
 var resources = ref(null)
+var apps = ref(null)
 
 
 onMounted(() => {
@@ -33,60 +35,100 @@ function generateResources() {
        
   }
         
-  
+function getPosition(time, duration){
+    const startHour = parseInt(time.split(':')[0]);
+    const startMinute = parseInt(time.split(':')[1]);    
+    const startPosition = (startHour * TimeSlotHeight * 4) + (startMinute * TimeSlotHeight); // 40px per 15 minutes
+    const eventHeight = (duration / 60) * TimeSlotHeight*4;
+    return {
+        top: (startPosition + TimeSlotHeight)+"px",
+        height: eventHeight+"px"
+    }
+}
+
+function getMinutes(time){
+
+}
 
 
-// function renderEvents(date) {
-//     // Clear existing events
-//     document.querySelectorAll('.event').forEach(eventEl => eventEl.remove());
+function renderEvents(date) {
+    // // Clear existing events
+    // document.querySelectorAll('.event').forEach(eventEl => eventEl.remove());
 
-//     var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-//     formattedDate = new Date(date - tzoffset).toISOString().slice(0, -1).split('T')[0];
+    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
+    var formattedDate = new Date(date - tzoffset).toISOString().slice(0, -1).split('T')[0];
     
-//     console.log(formattedDate)  // => '2015-01-26T06:40:36.181'
-
-//     $.ajax({
-//         url: "http://127.0.0.1:8000/api/appointments/?Date="+formattedDate,
-//         method: "GET",
-       
-//         xhrFields: {
-//     withCredentials: true 
-//   },
-        
-//         success: function (data) {
-//             for (const app in data) {
-//                 console.log(data[app])
-//                 for (const service in data[app].Services){
-//                     schedule = data[app].Services[service]
-//                     const resourceColumn = document.querySelector(`.resource-column[id="${schedule.TechID}"]`)
-//                      if (resourceColumn) {
-//                         const eventDiv = document.createElement('div');
-//                         eventDiv.classList.add('event');
-//                         eventDiv.textContent = schedule['ServiceName'];
-//                         const startHour = parseInt(schedule['ServiceStartTime'].split(':')[0]);
-//                         const startMinute = parseInt(schedule['ServiceStartTime'].split(':')[1]);
+    console.log(formattedDate)  // => '2015-01-26T06:40:36.181'
+     fetch("http://127.0.0.1:8000/api/appointments/?Date="+formattedDate, { 
+        credentials: 'include'
+     }) 
+      .then(response =>  {
+           if (response.status === 403) {
+                throw new Error("Not Authenticated")
+            }
+            return response.json() 
+        })
+      .then(data => {
+            apps.value = data
+        //         console.log(data[app])
+        //         for (const service in data[app].Services){
+        //             schedule = data[app].Services[service]
+        //             const resourceColumn = document.querySelector(`.resource-column[id="${schedule.TechID}"]`)
+        //              if (resourceColumn) {
+        //                 const eventDiv = document.createElement('div');
+        //                 eventDiv.classList.add('event');
+        //                 eventDiv.textContent = schedule['ServiceName'];
+        //                 const startHour = parseInt(schedule['ServiceStartTime'].split(':')[0]);
+        //                 const startMinute = parseInt(schedule['ServiceStartTime'].split(':')[1]);
     
-//                         const startPosition = (startHour * TimeSlotHeight) + (startMinute / 15 * TimeSlotHeight); // 40px per 15 minutes
-//                         const durationInMinutes = schedule['ServiceDuration']
-//                         const eventHeight = (durationInMinutes / 60) * TimeSlotHeight;
-//                         eventDiv.style.top = `${startPosition + 40}px`; // Adjust for header height
-//                         eventDiv.style.height = `${eventHeight}px`;
-//                         eventDiv.style.lineHeight = `${eventHeight}px`;
-//                         resourceColumn.appendChild(eventDiv);
-//                      }
-//                 }
+        //                 const startPosition = (startHour * TimeSlotHeight) + (startMinute / 15 * TimeSlotHeight); // 40px per 15 minutes
+        //                 const durationInMinutes = schedule['ServiceDuration']
+        //                 const eventHeight = (durationInMinutes / 60) * TimeSlotHeight;
+        //                 eventDiv.style.top = `${startPosition + 40}px`; // Adjust for header height
+        //                 eventDiv.style.height = `${eventHeight}px`;
+        //                 eventDiv.style.lineHeight = `${eventHeight}px`;
+        //                 resourceColumn.appendChild(eventDiv);
+        //              }
+        //         }
+
+        }
+    )
+
         
-//         }},
-//         error: function (data) {
-//             console.log(data);
-//         }   
-//     });
+        // success: function (data) {
+        //     for (const app in data) {
+        //         console.log(data[app])
+        //         for (const service in data[app].Services){
+        //             schedule = data[app].Services[service]
+        //             const resourceColumn = document.querySelector(`.resource-column[id="${schedule.TechID}"]`)
+        //              if (resourceColumn) {
+        //                 const eventDiv = document.createElement('div');
+        //                 eventDiv.classList.add('event');
+        //                 eventDiv.textContent = schedule['ServiceName'];
+        //                 const startHour = parseInt(schedule['ServiceStartTime'].split(':')[0]);
+        //                 const startMinute = parseInt(schedule['ServiceStartTime'].split(':')[1]);
+    
+        //                 const startPosition = (startHour * TimeSlotHeight) + (startMinute / 15 * TimeSlotHeight); // 40px per 15 minutes
+        //                 const durationInMinutes = schedule['ServiceDuration']
+        //                 const eventHeight = (durationInMinutes / 60) * TimeSlotHeight;
+        //                 eventDiv.style.top = `${startPosition + 40}px`; // Adjust for header height
+        //                 eventDiv.style.height = `${eventHeight}px`;
+        //                 eventDiv.style.lineHeight = `${eventHeight}px`;
+        //                 resourceColumn.appendChild(eventDiv);
+        //              }
+        //         }
+        
+        // }},
+        // error: function (data) {
+        //     console.log(data);
+        // }   
+
    
-// }
+}
 
 function updateSchedule(date) {
     currentDate.value = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    // renderEvents(date);
+    renderEvents(date);
 }
 
 // Navigation
@@ -139,6 +181,16 @@ function reload(){
            <div v-for="(resource) in resources" class="resource-column">
                 <div class="resource-header"> {{ resource.TechName }} </div>
                 <div v-for="i in 24*4" class="time-slot-placeholder" > </div> 
+                <div v-for="app in apps" > 
+                    <div v-for="service in app.Services">
+                        <div v-if="service.TechID === resource.TechID" class="event" :style="{top: getPosition(service.ServiceStartTime,service.ServiceDuration).top,
+                        height: getPosition(service.ServiceStartTime,service.ServiceDuration).height,
+                        lineHeight: getPosition(service.ServiceStartTime,service.ServiceDuration).height
+                     }">
+                    {{ service.ServiceName }}
+                    </div>
+                    </div>
+                </div>
            </div>
         </div>
     </div>
