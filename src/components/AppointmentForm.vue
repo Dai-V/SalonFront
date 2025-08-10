@@ -1,16 +1,13 @@
 <script setup>
-import {ref} from 'vue'
+import {ref,defineEmits} from 'vue'
 let serviceCount = 0
-
+const emit = defineEmits(['closeForm'])
 const serviceRow = ref('')
-function openModal() {
-  bookingModal.style.display = 'flex';
-  addService(); 
-}
-
-function closeModal() {
-  bookingModal.style.display = 'none';
-}
+defineProps({
+  hour: Number,
+  minute: Number,
+  TechID: Number
+})
 
 function addService() {
 
@@ -26,6 +23,10 @@ function addService() {
 
   serviceCount++;
 }
+
+const closeModal = () => {
+      emit('closeForm', false);
+    };
 
 // document.getElementById('bookingForm').addEventListener('submit', function(e) {
 //   e.preventDefault();
@@ -59,7 +60,6 @@ function addService() {
 </script>
 
 <template>
-<p style="margin-top:14px;"><button class="primary" v-on:click="openModal()">Book Appointment</button></p>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
     <h2 id="modalTitle">Book Appointment</h2>
@@ -110,7 +110,7 @@ function addService() {
       </div>
 
       <div class="actions">
-        <button type="button" class="btn-ghost" v-on:click="closeModal()">Cancel</button>
+        <button type="button" class="btn-ghost" v-on:click="$emit('closeForm')">Cancel</button>
         <button type="submit" class="primary">Save Appointment</button>
       </div>
    </form>
@@ -120,7 +120,7 @@ function addService() {
 
 <style scoped>
 button.primary { background:#4f46e5; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
-.modal { display:none; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
+.modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
 .modal-card { width:520px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:20px; }
 .grid { display:grid; grid-template-columns: 1fr 120px; gap:10px; align-items:center; }

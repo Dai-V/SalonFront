@@ -1,5 +1,5 @@
 <script setup>
-import { onMounted, ref,h } from 'vue'
+import { onMounted, ref,h ,render} from 'vue'
 import LoginForm from './LoginForm.vue';
 import AppointmentForm from './AppointmentForm.vue';
 
@@ -11,6 +11,7 @@ let currentDisplayedDate = new Date();
 let currentDate = ref(null)
 var resources = ref(null)
 var apps = ref(null)
+const showAppointmentForm = ref(false);
 
 
 onMounted(() => {
@@ -96,11 +97,13 @@ function reload(){
   updateSchedule(currentDisplayedDate)
 }
 
+
+
 </script>
 
 <template>
 <LoginForm />
-<AppointmentForm />
+<AppointmentForm v-if="showAppointmentForm" @close-form="(n)=>showAppointmentForm=n" />
 
 <div class="schedule-container">
     <div class="schedule-header">
@@ -130,7 +133,7 @@ function reload(){
         <div class="resources-container">
            <div v-for="(resource) in resources" class="resource-column">
                 <div class="resource-header"> {{ resource.TechName }} </div>
-                <div v-for="i in 24*4" class="time-slot-placeholder" > </div> 
+                <div v-for="i in 24*4" class="time-slot-placeholder" @click="showAppointmentForm=!showAppointmentForm"> </div> 
                 <div v-for="app in apps" > 
                     <div v-for="service in app.Services">
                         <div v-if="service.TechID === resource.TechID" class="event" :style="{top: getPosition(service.ServiceStartTime,service.ServiceDuration).top,
