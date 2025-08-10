@@ -1,6 +1,7 @@
 <script setup>
 import { onMounted, ref,h } from 'vue'
 import LoginForm from './LoginForm.vue';
+import AppointmentForm from './AppointmentForm.vue';
 
 
 
@@ -46,9 +47,7 @@ function getPosition(time, duration){
     }
 }
 
-function getMinutes(time){
 
-}
 
 
 function renderEvents(date) {
@@ -70,58 +69,7 @@ function renderEvents(date) {
         })
       .then(data => {
             apps.value = data
-        //         console.log(data[app])
-        //         for (const service in data[app].Services){
-        //             schedule = data[app].Services[service]
-        //             const resourceColumn = document.querySelector(`.resource-column[id="${schedule.TechID}"]`)
-        //              if (resourceColumn) {
-        //                 const eventDiv = document.createElement('div');
-        //                 eventDiv.classList.add('event');
-        //                 eventDiv.textContent = schedule['ServiceName'];
-        //                 const startHour = parseInt(schedule['ServiceStartTime'].split(':')[0]);
-        //                 const startMinute = parseInt(schedule['ServiceStartTime'].split(':')[1]);
-    
-        //                 const startPosition = (startHour * TimeSlotHeight) + (startMinute / 15 * TimeSlotHeight); // 40px per 15 minutes
-        //                 const durationInMinutes = schedule['ServiceDuration']
-        //                 const eventHeight = (durationInMinutes / 60) * TimeSlotHeight;
-        //                 eventDiv.style.top = `${startPosition + 40}px`; // Adjust for header height
-        //                 eventDiv.style.height = `${eventHeight}px`;
-        //                 eventDiv.style.lineHeight = `${eventHeight}px`;
-        //                 resourceColumn.appendChild(eventDiv);
-        //              }
-        //         }
-
-        }
-    )
-
-        
-        // success: function (data) {
-        //     for (const app in data) {
-        //         console.log(data[app])
-        //         for (const service in data[app].Services){
-        //             schedule = data[app].Services[service]
-        //             const resourceColumn = document.querySelector(`.resource-column[id="${schedule.TechID}"]`)
-        //              if (resourceColumn) {
-        //                 const eventDiv = document.createElement('div');
-        //                 eventDiv.classList.add('event');
-        //                 eventDiv.textContent = schedule['ServiceName'];
-        //                 const startHour = parseInt(schedule['ServiceStartTime'].split(':')[0]);
-        //                 const startMinute = parseInt(schedule['ServiceStartTime'].split(':')[1]);
-    
-        //                 const startPosition = (startHour * TimeSlotHeight) + (startMinute / 15 * TimeSlotHeight); // 40px per 15 minutes
-        //                 const durationInMinutes = schedule['ServiceDuration']
-        //                 const eventHeight = (durationInMinutes / 60) * TimeSlotHeight;
-        //                 eventDiv.style.top = `${startPosition + 40}px`; // Adjust for header height
-        //                 eventDiv.style.height = `${eventHeight}px`;
-        //                 eventDiv.style.lineHeight = `${eventHeight}px`;
-        //                 resourceColumn.appendChild(eventDiv);
-        //              }
-        //         }
-        
-        // }},
-        // error: function (data) {
-        //     console.log(data);
-        // }   
+      })
 
    
 }
@@ -152,6 +100,8 @@ function reload(){
 
 <template>
 <LoginForm />
+<AppointmentForm />
+
 <div class="schedule-container">
     <div class="schedule-header">
         <h2>Daily Schedule - <span> {{ currentDate }}</span></h2>
@@ -304,7 +254,7 @@ function reload(){
 }
 
 .event:hover {
-  background-color: gray
+  background-color: green
 }
 
 </style>
