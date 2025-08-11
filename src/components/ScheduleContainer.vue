@@ -8,11 +8,12 @@ import AppointmentForm from './AppointmentForm.vue';
 const TimeSlotHeight = 40
 
 let currentDisplayedDate = new Date(); 
-let currentDate = ref(null)
-var resources = ref(null)
-var apps = ref(null)
+const currentDate = ref(null)
+const resources = ref(null)
+const apps = ref(null)
 const showAppointmentForm = ref(false);
-
+const appStartTime = ref('00:00:00')
+const realDate = ref(null)
 
 onMounted(() => {
  reload()
@@ -30,7 +31,6 @@ function generateResources() {
         })
       .then(data => {
            resources.value = data
-           console.log(resources.value)
 
         })
 
@@ -40,7 +40,7 @@ function generateResources() {
 function getPosition(time, duration){
     const startHour = parseInt(time.split(':')[0]);
     const startMinute = parseInt(time.split(':')[1]);    
-    const startPosition = (startHour * TimeSlotHeight * 4) + (startMinute * TimeSlotHeight); // 40px per 15 minutes
+    const startPosition = (startHour * TimeSlotHeight * 4) + (startMinute/15 * TimeSlotHeight); // 40px per 15 minutes
     const eventHeight = (duration / 60) * TimeSlotHeight*4;
     return {
         top: (startPosition + TimeSlotHeight)+"px",
@@ -52,13 +52,10 @@ function getPosition(time, duration){
 
 
 function renderEvents(date) {
-    // // Clear existing events
-    // document.querySelectorAll('.event').forEach(eventEl => eventEl.remove());
 
-    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds
-    var formattedDate = new Date(date - tzoffset).toISOString().slice(0, -1).split('T')[0];
-    
-    console.log(formattedDate)  // => '2015-01-26T06:40:36.181'
+    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds 
+    var formattedDate = new Date(date - tzoffset).toISOString().slice(0, -1).split('T')[0];     // => '2015-01-26T06:40:36.181'
+    realDate.value = formattedDate.slice(0, 10)
      fetch("http://127.0.0.1:8000/api/appointments/?Date="+formattedDate, { 
         credentials: 'include'
      }) 
@@ -97,13 +94,22 @@ function reload(){
   updateSchedule(currentDisplayedDate)
 }
 
+function openAppointmentForm(i, TechID) // 1 i = 15 minutes
+{
+    let hour = i/4
+    let minute = (i%4)*15 
+    const date = new Date(); 
+    date.setHours(hour, minute, 0, 0); 
+    appStartTime.value = date
+    showAppointmentForm.value=!showAppointmentForm.value
+}
 
 
 </script>
 
 <template>
 <LoginForm />
-<AppointmentForm v-if="showAppointmentForm" @close-form="(n)=>showAppointmentForm=n" />
+<AppointmentForm v-if="showAppointmentForm" @close-form="showAppointmentForm=false" :startTime="appStartTime" :date="realDate" :techs="resources" :callReload="reload"/>
 
 <div class="schedule-container">
     <div class="schedule-header">
@@ -133,7 +139,7 @@ function reload(){
         <div class="resources-container">
            <div v-for="(resource) in resources" class="resource-column">
                 <div class="resource-header"> {{ resource.TechName }} </div>
-                <div v-for="i in 24*4" class="time-slot-placeholder" @click="showAppointmentForm=!showAppointmentForm"> </div> 
+                <div v-for="i in 24*4" class="time-slot-placeholder" @click="openAppointmentForm(i,resource.TechID)"> </div> 
                 <div v-for="app in apps" > 
                     <div v-for="service in app.Services">
                         <div v-if="service.TechID === resource.TechID" class="event" :style="{top: getPosition(service.ServiceStartTime,service.ServiceDuration).top,

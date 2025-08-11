@@ -1,77 +1,123 @@
 <script setup>
 import {ref,defineEmits} from 'vue'
-let serviceCount = 0
+import ServiceRow from './ServiceRow.vue'
+
 const emit = defineEmits(['closeForm'])
-const serviceRow = ref('')
-defineProps({
-  hour: Number,
-  minute: Number,
-  TechID: Number
+const props = defineProps({
+  startTime: Date,
+  date:Date,
+  techs:Array,
+  callReload: Function,
+
 })
 
-function addService() {
+var csrftoken
+const services = ref([]);
+const servicesForm = ref([]);
 
-  serviceRow.value +=`
-  <div class="service-row">
-    <input class="service-input" type="text" name="ServiceName_${serviceCount}" placeholder="Service Name"  required>
-    <input type="text" name="ServiceCode_${serviceCount}" placeholder="Code" >
-    <input type="number" step="0.01" name="ServicePrice_${serviceCount}" placeholder="Price" >
-    <input type="time" name="ServiceStartTime_${serviceCount}" >
-    <button type="button" onclick="removeService(${serviceCount})" class="btn-ghost remove-btn"> ✕ </button>
-  </div>
-  `;
 
-  serviceCount++;
+const appDate = ref(props.date);
+const appComment = ref("");
+const appStatus = ref("Open");
+const appTotal = ref(0);
+const paymentType =ref("Visa");
+
+
+let serviceCount = 0;
+function getToken()
+{       
+     fetch('http://127.0.0.1:8000/api/is_logged_in', { 
+        credentials: 'include'
+     }) 
+        .then(response => {
+           if (response.status === 401 || response.status === 403) {
+            } else if (response.status === 200) {
+                csrftoken = response.headers.get("x-csrftoken");
+            }
+            
+        })
 }
 
-const closeModal = () => {
-      emit('closeForm', false);
+function addService()  {
+  serviceCount++;
+
+  services.value.push({ startTime:props.startTime });
+};
+
+const updateServices = (service) => {
+    if(!servicesForm.value[service.id])
+      servicesForm.value.push(service)
+    else {
+      servicesForm.value[service.id] = service
+    }
+}
+
+function appSubmit() {
+
+
+ const postData = {
+      AppStatus: appStatus.value,
+      AppComment: appComment.value,
+      AppTotal: appTotal.value,
+      AppDate: appDate.value,
+      AppStatus: appStatus.value,
+      PaymentType: paymentType.value,
+      CustomerID: 1,
+      Services: []
+
     };
+    for (let i in servicesForm.value) {
+      let service = {
+        ServiceName : servicesForm.value[i].name,
+        ServiceCode : servicesForm.value[i].code,
+        ServicePrice: servicesForm.value[i].price,
+        ServiceStartTime: servicesForm.value[i].start,
+        ServiceDuration: servicesForm.value[i].duration,
+        TechID: servicesForm.value[i].tech
 
-// document.getElementById('bookingForm').addEventListener('submit', function(e) {
-//   e.preventDefault();
+      }
+      console.log(service)
+      postData.Services.push(service)
+    }
 
-//   const formData = new FormData(this);
-//   const appointment = {
-//     AppDate: formData.get('AppDate'),
-//     AppStatus: formData.get('AppStatus'),
-//     AppTotal: parseFloat(formData.get('AppTotal')),
-//     AppComment: formData.get('AppComment'),
-//     PaymentType: formData.get('PaymentType'),
-//     Services: []
-//   };
+    fetch('http://127.0.0.1:8000/api/appointments/', { 
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+         'X-CSRFTOKEN': csrftoken
+      },
+      credentials: 'include',
+      body: JSON.stringify(postData) 
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Response from server:', data);
+        emit('closeForm')
+        props.callReload()
 
-//   for (let i = 0; i < serviceCount; i++) {
-//     if (formData.get(`ServiceName_${i}`)) {
-//       appointment.Services.push({
-//         ServiceName: formData.get(`ServiceName_${i}`),
-//         ServiceCode: formData.get(`ServiceCode_${i}`),
-//         ServicePrice: parseFloat(formData.get(`ServicePrice_${i}`)),
-//         ServiceStartTime: formData.get(`ServiceStartTime_${i}`)
-//       });
-//     }
-//   }
-
-//   console.log(JSON.stringify(appointment, null, 2));
-//   closeModal();
-// });
-
-
+      })
+      .catch(error => {
+        console.error('Error posting custom data:', error);
+        emit('closeForm')
+        
+      });
+}
+getToken()
 </script>
 
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
     <h2 id="modalTitle">Book Appointment</h2>
-    <form id="bookingForm" onsubmit="handleSubmit(event)">
+    <form id="bookingForm" @submit.prevent="appSubmit()">
       <div class="grid">
         <div>
           <label for="AppDate">Date</label>
-          <input type="date" id="AppDate" name="AppDate" required>
+          <input v-model="appDate" type="date" id="AppDate" name="AppDate"  required>
         </div>
         <div>
           <label for="AppStatus">Status</label>
-          <select id="AppStatus" name="AppStatus">
+          <select v-model="appStatus" id="AppStatus" name="AppStatus">
             <option>Open</option>
             <option>Closed</option>
           </select>
@@ -81,11 +127,11 @@ const closeModal = () => {
       <div class="two-cols">
         <div>
           <label for="AppTotal">Total</label>
-          <input type="number" step="0.01" id="AppTotal" name="AppTotal" required placeholder="131.00">
+          <input v-model="appTotal" type="number" id="AppTotal" name="AppTotal"  placeholder="0">
         </div>
         <div>
-          <label for="PaymentType">Payment</label>
-          <select id="PaymentType" name="PaymentType">
+          <label for="PaymentType">Payment Type</label>
+          <select v-model="paymentType" id="PaymentType" name="PaymentType">
             <option>Cash</option>
             <option>Visa</option>
             <option>Mastercard</option>
@@ -94,19 +140,18 @@ const closeModal = () => {
       </div>
 
       <label for="AppComment">Comment</label>
-      <textarea id="AppComment" name="AppComment" rows="2"></textarea>
+      <textarea v-model="appComment" id="AppComment" name="AppComment" rows="2"></textarea>
 
       <div class="services">
-        <h4>Services</h4>
-        <div v-html="serviceRow" id="servicesContainer"></div>
-            <!-- <div class="service-row">
-    <input type="text" name="ServiceName_${serviceCount}" placeholder="Service Name"  required>
-    <input type="text" name="ServiceCode_${serviceCount}" placeholder="Code" >
-    <input type="number" step="0.01" name="ServicePrice_${serviceCount}" placeholder="Price" >
-    <input type="time" name="ServiceStartTime_${serviceCount}" >
-    <button type="button" onclick="removeService(${serviceCount})" class="btn-ghost remove-btn"> ✕ </button> -->
-       <button type="button" class="add-service" v-on:click="addService()">+ Add Service</button>
-          
+        <label>Services</label>
+      <div id="servicesContainer">
+        <div v-for="(service,index) in services" :key="index">
+        <ServiceRow :startTime="service.startTime" :techs="props.techs" :id=index
+         @emit-changes="updateServices"
+         />
+        </div>
+      </div>
+       <button type="button" class="add-service" @click="addService()">+ Add Service</button>
       </div>
 
       <div class="actions">
@@ -121,14 +166,11 @@ const closeModal = () => {
 <style scoped>
 button.primary { background:#4f46e5; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
-.modal-card { width:520px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
-h2 { margin:0 0 8px 0; font-size:20px; }
+.modal-card { width:700px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
+h2 { margin:0 0 8px 0; font-size:25px; }
 .grid { display:grid; grid-template-columns: 1fr 120px; gap:10px; align-items:center; }
-label { font-size:13px; color:#334155; }
+label { font-size:20px; color:#334155; }
 input, select, textarea { width:90%; padding:8px 10px; border-radius:8px; border:1px solid #e6eef7; background:#fbfdff; }
-:deep(.services) { margin-top:12px; }
-:deep(.service-row) { display:flex; gap:8px;  padding-bottom: 8px; }
-:deep(.service-row input) { flex:1;width:90%; padding:8px 10px; border-radius:8px; border:1px solid #e6eef7; background:#fbfdff;}
 .actions { display:flex; gap:8px; margin-top:14px; justify-content:flex-end; }
 .btn-ghost { background:transparent; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; }
 .add-service { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; }
