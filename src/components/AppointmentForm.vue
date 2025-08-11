@@ -23,7 +23,7 @@ const appTotal = ref(0);
 const paymentType =ref("Visa");
 
 
-let serviceCount = 0;
+let serviceID = 0;
 function getToken()
 {       
      fetch('http://127.0.0.1:8000/api/is_logged_in', { 
@@ -39,10 +39,15 @@ function getToken()
 }
 
 function addService()  {
-  serviceCount++;
-
-  services.value.push({ startTime:props.startTime });
+  services.value.push({ startTime:props.startTime,
+    id: serviceID
+   });
+  serviceID++;
 };
+
+const removeService = (id) => {
+  services.value = services.value.filter(service => service.id!==id);
+}
 
 const updateServices = (service) => {
     if(!servicesForm.value[service.id])
@@ -99,7 +104,7 @@ function appSubmit() {
       .catch(error => {
         console.error('Error posting custom data:', error);
         emit('closeForm')
-        
+
       });
 }
 getToken()
@@ -145,9 +150,9 @@ getToken()
       <div class="services">
         <label>Services</label>
       <div id="servicesContainer">
-        <div v-for="(service,index) in services" :key="index">
-        <ServiceRow :startTime="service.startTime" :techs="props.techs" :id=index
-         @emit-changes="updateServices"
+        <div v-for="service in services" :key="service.id">
+        <ServiceRow :startTime="service.startTime" :techs="props.techs" :id=service.id
+         @emit-changes="updateServices" @remove-service="removeService"
          />
         </div>
       </div>

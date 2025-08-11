@@ -1,26 +1,31 @@
 <script setup>
-import { onMounted, ref,h ,render} from 'vue'
+import { onMounted, ref,h ,render, watch} from 'vue'
 import LoginForm from './LoginForm.vue';
 import AppointmentForm from './AppointmentForm.vue';
+import {  DatePicker } from 'v-calendar';
+import 'v-calendar/style.css';
 
 
 
 const TimeSlotHeight = 40
 
-let currentDisplayedDate = new Date(); 
-const currentDate = ref(null)
+const currentDisplayedDate = ref(new Date()); 
+watch(currentDisplayedDate, (newValue) => {
+  reload()
+});
 const resources = ref(null)
 const apps = ref(null)
 const showAppointmentForm = ref(false);
 const appStartTime = ref('00:00:00')
-const realDate = ref(null)
+const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds 
+const formattedDate = ref(new Date(currentDisplayedDate.value - tzoffset).toISOString().slice(0, -1).split('T')[0]); // get correct date
 
 onMounted(() => {
- reload()
+reload()
 })
 
 function generateResources() {
-  fetch('http://127.0.0.1:8000/api/technicians/', { 
+  fetch('http://127.0.0.1:8000/api/technicians/?Date='+formattedDate.value, { 
         credentials: 'include'
      }) 
       .then(response =>  {
@@ -51,12 +56,10 @@ function getPosition(time, duration){
 
 
 
-function renderEvents(date) {
+function renderEvents() {
 
-    var tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds 
-    var formattedDate = new Date(date - tzoffset).toISOString().slice(0, -1).split('T')[0];     // => '2015-01-26T06:40:36.181'
-    realDate.value = formattedDate.slice(0, 10)
-     fetch("http://127.0.0.1:8000/api/appointments/?Date="+formattedDate, { 
+
+     fetch("http://127.0.0.1:8000/api/appointments/?Date="+formattedDate.value, { 
         credentials: 'include'
      }) 
       .then(response =>  {
@@ -72,26 +75,10 @@ function renderEvents(date) {
    
 }
 
-function updateSchedule(date) {
-    currentDate.value = date.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-    renderEvents(date);
-}
-
-// Navigation
-function prevDayClick(event){
-    currentDisplayedDate.setDate(currentDisplayedDate.getDate() - 1);
-     reload()
-
-}
-
-function nextDayClick(event){
-    currentDisplayedDate.setDate(currentDisplayedDate.getDate() + 1);
-    reload()
-}
-
 function reload(){
+  formattedDate.value = new Date(currentDisplayedDate.value - tzoffset).toISOString().slice(0, -1).split('T')[0]
   generateResources()
-  updateSchedule(currentDisplayedDate)
+  renderEvents(currentDisplayedDate.value)
 }
 
 function openAppointmentForm(i, TechID) // 1 i = 15 minutes
@@ -109,15 +96,11 @@ function openAppointmentForm(i, TechID) // 1 i = 15 minutes
 
 <template>
 <LoginForm />
-<AppointmentForm v-if="showAppointmentForm" @close-form="showAppointmentForm=false" :startTime="appStartTime" :date="realDate" :techs="resources" :callReload="reload"/>
+<AppointmentForm v-if="showAppointmentForm" @close-form="showAppointmentForm=false" :startTime="appStartTime" :date="formattedDate.slice(0, 10)" :techs="resources" :callReload="reload"/>
 
 <div class="schedule-container">
     <div class="schedule-header">
-        <h2>Daily Schedule - <span> {{ currentDate }}</span></h2>
-        <div class="navigation-buttons">
-            <button id="prevDay" @click="prevDayClick">Previous Day</button>
-            <button id="nextDay" @click="nextDayClick">Next Day</button>
-        </div>
+        <DatePicker v-model="currentDisplayedDate" is-required />
     </div>
     
     <div class="schedule-grid">
@@ -139,7 +122,7 @@ function openAppointmentForm(i, TechID) // 1 i = 15 minutes
         <div class="resources-container">
            <div v-for="(resource) in resources" class="resource-column">
                 <div class="resource-header"> {{ resource.TechName }} </div>
-                <div v-for="i in 24*4" class="time-slot-placeholder" @click="openAppointmentForm(i,resource.TechID)"> </div> 
+                <div v-for="i in 24*4" class="time-slot-placeholder" @click="openAppointmentForm(i-1,resource.TechID)"> </div> 
                 <div v-for="app in apps" > 
                     <div v-for="service in app.Services">
                         <div v-if="service.TechID === resource.TechID" class="event" :style="{top: getPosition(service.ServiceStartTime,service.ServiceDuration).top,

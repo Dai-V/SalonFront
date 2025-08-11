@@ -17,7 +17,7 @@ const props = defineProps({
 
 
 
-const emit = defineEmits(["emitChanges"]);
+const emit = defineEmits(["emitChanges","removeService"]);
 
 
 getSavedServices()
@@ -63,21 +63,21 @@ function emitChanges(){
 </script>
 <template>
 <div class="service-row">
-    <select v-model="selectedTech" @change="emitChanges()">
+    <select v-model="selectedTech" @change="emitChanges()" required>
     <option v-for="option in props.techs"  :value="option.TechID">
         {{  option.TechName }}
     </option>
     </select>
-    <select v-model="selectedOption" @change="onOptionChange();emitChanges()">
+    <select v-model="selectedOption" @change="onOptionChange();emitChanges()" required>
     <option v-for="option in selectOptions" :value="option">
         {{ option.ServiceCode }}
     </option>
      </select>
-    <input type="text" placeholder="Name" v-model="serviceName" @change="emitChanges()">
-    <input type="number"  placeholder="Price"   v-model="servicePrice" @change="emitChanges()" >
-    <input type="time"  placeholder ="Start"  v-model="serviceStartTime"@change="emitChanges()" >
-    <input type="number"  placeholder="Duration"   v-model="serviceDuration"@change="emitChanges()">
-    <!-- <button type="button" onclick="removeService(${serviceCount})" class="btn-ghost remove-btn"> ✕ </button> -->
+    <input type="text" placeholder="Name" v-model="serviceName" @change="emitChanges()" required>
+    <input type="number"  placeholder="Price"   v-model="servicePrice" @change="emitChanges()" required >
+    <input type="time"  placeholder ="Start"  v-model="serviceStartTime"@change="emitChanges()" required>
+    <input type="number"  placeholder="Duration"   v-model="serviceDuration"@change="emitChanges()" required>
+    <button type="button" @click="$emit('removeService',id)" class="btn-ghost remove-btn"> ✕ </button>
 </div>
 </template>
 
