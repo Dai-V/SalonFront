@@ -4,18 +4,15 @@ import ServiceRow from './ServiceRow.vue'
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
-  startTime: Date,
-  date:Date,
   techs:Array,
   callReload: Function,
+  appID:Number,
 
 })
 
 var csrftoken
 const services = ref([]);
 const servicesForm = ref([]);
-const serviceStartTime = ref('00:00:00')
-
 const appDate = ref(props.date);
 const appComment = ref("");
 const appStatus = ref("Open");
@@ -39,19 +36,21 @@ function getToken()
 }
 
 function addService()  {
-  let hour = props.startTime.getHours()
-  let minute = props.startTime.getMinutes()
-  hour = hour < 10 ? '0' + hour : hour;
-  minute = minute < 10 ? '0' + minute : minute;
-  serviceStartTime.value = hour + ":" + minute
-  services.value.push({serviceStartTime:serviceStartTime.value,
-    id: serviceID
+  services.value.push({ 
+    id: serviceID,
+    serviceStartTime:"00:00",
+    serviceDuration:0,
+    serviceName:"",
+    serviceCode:"",
+    servicePrice:0,
+    techID: ""
    });
   serviceID++;
 };
 
 const removeService = (id) => {
   services.value = services.value.filter(service => service.id!==id);
+  servicesForm.value = servicesForm.value.filter(service => service.id!==id)
 }
 
 const updateServices = (service) => {
@@ -60,6 +59,54 @@ const updateServices = (service) => {
     else {
       servicesForm.value[service.id] = service
     }
+}
+function getAppointment() {
+  fetch('http://127.0.0.1:8000/api/appointments/'+props.appID, { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+         'X-CSRFTOKEN': csrftoken
+      },
+      credentials: 'include',
+    })
+      .then(response => 
+    {
+      if (response.status === 403) {
+        throw new Error("Not Authenticated")
+      }
+      if (response.status === 404) {
+        throw new Error("Appointment not found")
+      }
+      return response.json()
+    })
+      .then(data => {
+        console.log('Response from server:', data);
+        for (let service in data.Services){
+       services.value.push({ 
+    id: serviceID,
+    serviceStartTime:data.Services[service].ServiceStartTime,
+    serviceDuration:data.Services[service].ServiceDuration,
+    serviceName:data.Services[service].ServiceName,
+    serviceCode:data.Services[service].ServiceCode,
+    servicePrice:data.Services[service].ServicePrice,
+    techID: data.Services[service].TechID
+
+          });
+        serviceID++;
+        }
+        appDate.value = data.AppDate
+        appComment.value = data.AppComment
+        appStatus.value = data.AppStatus
+        appTotal.value = data.AppTotal
+        paymentType.value = data.PaymentType
+        console.log(appTotal.value)
+
+      })
+      .catch(error => {
+        console.error('Error posting custom data:', error);
+        emit('closeForm')
+
+      });
 }
 
 function appSubmit() {
@@ -90,8 +137,8 @@ function appSubmit() {
       postData.Services.push(service)
     }
 
-    fetch('http://127.0.0.1:8000/api/appointments/', { 
-      method: 'POST',
+    fetch('http://127.0.0.1:8000/api/appointments/'+props.appID+'/', { 
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
          'X-CSRFTOKEN': csrftoken
@@ -113,12 +160,13 @@ function appSubmit() {
       });
 }
 getToken()
+getAppointment()
 </script>
 
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
-    <h2 id="modalTitle">Book Appointment</h2>
+    <h2 id="modalTitle">Edit Appointment</h2>
     <form id="bookingForm" @submit.prevent="appSubmit()">
       <div class="grid">
         <div>
@@ -156,8 +204,13 @@ getToken()
         <label>Services</label>
       <div id="servicesContainer">
         <div v-for="service in services" :key="service.id">
-        <ServiceRow :serviceStartTime="service.serviceStartTime" :techs="props.techs" :id=service.id
-         @emit-changes="updateServices" @remove-service="removeService"
+        <ServiceRow  :techs="props.techs" :id="service.id"
+         @emit-changes="updateServices" @remove-service="removeService" :serviceName="service.serviceName"
+  :servicePrice="service.servicePrice"
+  :serviceStartTime="service.serviceStartTime" 
+  :serviceDuration="service.serviceDuration"
+  :selectedTech="service.techID"
+  :selectedOption="service.serviceCode"
          />
         </div>
       </div>

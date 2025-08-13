@@ -1,6 +1,6 @@
 <script setup>
 import { ref,defineEmits} from 'vue'
-const selectOptions = ref(null)
+const selectOptions = ref()
 const selectedOption = ref(null)
 const serviceName = ref(null)
 const servicePrice= ref(0)
@@ -9,9 +9,14 @@ const serviceDuration = ref(0)
 const selectedTech = ref(null)
 
 const props = defineProps({
-  startTime:Date,
   techs:Array,
-  id:Number
+  id:Number,
+  serviceName:String,
+  servicePrice:Number,
+  serviceStartTime:String,
+  serviceDuration:Number,
+  selectedTech:Number,
+  selectedOption:String
 
 })
 
@@ -28,38 +33,53 @@ function getSavedServices() {
      }) 
         .then(response => response.json())
         .then(data => {
-          selectOptions.value =  data
+          selectOptions.value = data
         })
 }
 
 
 function onOptionChange(){
-    serviceName.value = selectedOption.value.ServiceName
-    servicePrice.value =  selectedOption.value.ServicePrice
-    serviceDuration.value =  selectedOption.value.ServiceDuration
-    let hour = props.startTime.getHours()
-    let minute = props.startTime.getMinutes()
-    hour = hour < 10 ? '0' + hour : hour;
-    minute = minute < 10 ? '0' + minute : minute;
-    serviceStartTime.value = hour + ":" + minute
-    emitChanges()
+    for (let i in selectOptions.value)
+    if (selectOptions.value[i].ServiceCode === selectedOption.value){
+        serviceName.value = selectOptions.value[i].ServiceName
+        servicePrice.value =  selectOptions.value[i].ServicePrice
+        serviceDuration.value =  selectOptions.value[i].ServiceDuration
+    }
+        emitChanges()
 }
 
 function emitChanges(){
   if (selectedOption.value){
-
   const service = ref({
     id:props.id,
-    code:selectedOption.value.ServiceCode,
+    code:selectedOption.value,
     name:serviceName.value,
     price:servicePrice.value,
     duration:serviceDuration.value,
     start:serviceStartTime.value,
     tech:selectedTech.value
 });
+
   emit('emitChanges',service.value)
 }
 }
+
+function onInit(){
+    selectedOption.value = props.selectedOption
+    serviceName.value = props.serviceName
+    serviceDuration.value = props.serviceDuration
+    servicePrice.value = props.servicePrice
+    serviceStartTime.value = props.serviceStartTime
+    selectedTech.value = props.selectedTech
+    emitChanges()
+}
+
+function removeService(){
+    emit('removeService',props.id)
+}
+
+
+onInit()
 </script>
 <template>
 <div class="service-row">
@@ -68,8 +88,8 @@ function emitChanges(){
         {{  option.TechName }}
     </option>
     </select>
-    <select v-model="selectedOption" @change="onOptionChange();emitChanges()" required>
-    <option v-for="option in selectOptions" :value="option">
+    <select v-model="selectedOption" @change="onOptionChange()" required>
+    <option v-for="option in selectOptions" :value="option.ServiceCode">
         {{ option.ServiceCode }}
     </option>
      </select>
@@ -77,7 +97,7 @@ function emitChanges(){
     <input type="number"  placeholder="Price"   v-model="servicePrice" @change="emitChanges()" required >
     <input type="time"  placeholder ="Start"  v-model="serviceStartTime"@change="emitChanges()" required>
     <input type="number"  placeholder="Duration"   v-model="serviceDuration"@change="emitChanges()" required>
-    <button type="button" @click="$emit('removeService',id)" class="btn-ghost remove-btn"> ✕ </button>
+    <button type="button" @click="removeService()" class="btn-ghost remove-btn"> ✕ </button>
 </div>
 </template>
 

@@ -2,6 +2,7 @@
 import { onMounted, ref,h ,render, watch} from 'vue'
 import LoginForm from './LoginForm.vue';
 import AppointmentForm from './AppointmentForm.vue';
+import AppointmentEditForm from './AppointmentEditForm.vue';
 import {  DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
 
@@ -15,7 +16,9 @@ watch(currentDisplayedDate, (newValue) => {
 });
 const resources = ref(null)
 const apps = ref(null)
-const showAppointmentForm = ref(false);
+const showAppointmentForm = ref(false)
+const showAppointmentEditForm = ref(false)
+const appIDEdit = ref(null)
 const appStartTime = ref('00:00:00')
 const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds 
 const formattedDate = ref(new Date(currentDisplayedDate.value - tzoffset).toISOString().slice(0, -1).split('T')[0]); // get correct date
@@ -81,7 +84,7 @@ function reload(){
   renderEvents(currentDisplayedDate.value)
 }
 
-function openAppointmentForm(i, TechID) // 1 i = 15 minutes
+function openAppointmentForm(i) // 1 i = 15 minutes
 {
     let hour = i/4
     let minute = (i%4)*15 
@@ -91,12 +94,20 @@ function openAppointmentForm(i, TechID) // 1 i = 15 minutes
     showAppointmentForm.value=!showAppointmentForm.value
 }
 
+function openAppointmentEditForm(appID)
+{   
+    appIDEdit.value = appID
+    showAppointmentEditForm.value=!showAppointmentEditForm.value
+}
+
+
 
 </script>
 
 <template>
 <LoginForm />
 <AppointmentForm v-if="showAppointmentForm" @close-form="showAppointmentForm=false" :startTime="appStartTime" :date="formattedDate.slice(0, 10)" :techs="resources" :callReload="reload"/>
+<AppointmentEditForm v-if="showAppointmentEditForm" @close-form="showAppointmentEditForm=false" :techs="resources" :appID="appIDEdit" :callReload="reload"/>
 
 <div class="schedule-container">
     <div class="schedule-header">
@@ -122,8 +133,8 @@ function openAppointmentForm(i, TechID) // 1 i = 15 minutes
         <div class="resources-container">
            <div v-for="(resource) in resources" class="resource-column">
                 <div class="resource-header"> {{ resource.TechName }} </div>
-                <div v-for="i in 24*4" class="time-slot-placeholder" @click="openAppointmentForm(i-1,resource.TechID)"> </div> 
-                <div v-for="app in apps" > 
+                <div v-for="i in 24*4" class="time-slot-placeholder" @click="openAppointmentForm(i-1)"> </div> 
+                <div v-for="app in apps" @click="openAppointmentEditForm(app.AppID)"> 
                     <div v-for="service in app.Services">
                         <div v-if="service.TechID === resource.TechID" class="event" :style="{top: getPosition(service.ServiceStartTime,service.ServiceDuration).top,
                         height: getPosition(service.ServiceStartTime,service.ServiceDuration).height,
