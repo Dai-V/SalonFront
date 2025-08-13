@@ -99,7 +99,6 @@ function getAppointment() {
         appStatus.value = data.AppStatus
         appTotal.value = data.AppTotal
         paymentType.value = data.PaymentType
-        console.log(appTotal.value)
 
       })
       .catch(error => {
@@ -133,7 +132,6 @@ function appSubmit() {
         TechID: servicesForm.value[i].tech
 
       }
-      console.log(service)
       postData.Services.push(service)
     }
 

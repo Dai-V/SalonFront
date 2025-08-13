@@ -1,5 +1,33 @@
-# Vue 3 + Vite
+Functioning Features:
+- Appointments:
++ View a specific date's appointment
++ Create appointment
++ Edit appointment
 
-This template should help get you started developing with Vue 3 in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
+- Authentication:
++ Login
++ Logout
 
-Learn more about IDE Support for Vue in the [Vue Docs Scaling up Guide](https://vuejs.org/guide/scaling-up/tooling.html#ide-support).
+Todos:
+
+- Appointments:
++ Cancel Appointment
+
+- Saved Services:
++ View
++ Create
++ Edit
++ Delete
+
+- Technicians:
++ View
++ Create
++ Edit
++ Delete
+
+- Totals/Reports:
++ View totals within a range (including single date)
+
+-Authentication:
++ Register
+
