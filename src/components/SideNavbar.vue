@@ -71,7 +71,7 @@ function logoutClick(){
             </router-link>
         </li>
         </div>
-        <li v-if="authStore.isLoggedIn" >
+        <li v-if="authStore.isLoggedIn" style="position:absolute;bottom:50px;width:87%" >
             <a @click="logoutClick()">
             <i class="icon"> 🚪 </i>
             <span v-if="!isCollapsed" class="label">Logout</span>
@@ -98,6 +98,7 @@ function logoutClick(){
   top: 0;
   transition: width 0.3s;
   overflow: hidden;
+  
 }
 
 .sidebar.collapsed {

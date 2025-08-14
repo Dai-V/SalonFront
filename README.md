@@ -4,6 +4,8 @@ Functioning Features:
 + Create appointment
 + Edit appointment
 
+- Navigation Bar:
+
 - Authentication:
 + Login
 + Logout
