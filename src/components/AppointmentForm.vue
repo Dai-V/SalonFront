@@ -1,6 +1,7 @@
 <script setup>
 import {ref,defineEmits} from 'vue'
 import ServiceRow from './ServiceRow.vue'
+import { useAuthStore } from '../stores/auth'
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
@@ -10,8 +11,7 @@ const props = defineProps({
   callReload: Function,
 
 })
-
-var csrftoken
+const authStore = useAuthStore();
 const services = ref([]);
 const servicesForm = ref([]);
 const serviceStartTime = ref('00:00:00')
@@ -21,22 +21,8 @@ const appComment = ref("");
 const appStatus = ref("Open");
 const appTotal = ref(0);
 const paymentType =ref("Visa");
-
-
 let serviceID = 0;
-function getToken()
-{       
-     fetch('http://127.0.0.1:8000/api/is_logged_in', { 
-        credentials: 'include'
-     }) 
-        .then(response => {
-           if (response.status === 401 || response.status === 403) {
-            } else if (response.status === 200) {
-                csrftoken = response.headers.get("x-csrftoken");
-            }
-            
-        })
-}
+
 
 function addService()  {
   let hour = props.startTime.getHours()
@@ -94,7 +80,7 @@ function appSubmit() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-         'X-CSRFTOKEN': csrftoken
+         'X-CSRFTOKEN': authStore.csrftoken
       },
       credentials: 'include',
       body: JSON.stringify(postData) 
@@ -112,7 +98,6 @@ function appSubmit() {
 
       });
 }
-getToken()
 </script>
 
 <template>

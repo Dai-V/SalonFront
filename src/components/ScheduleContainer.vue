@@ -1,13 +1,9 @@
 <script setup>
 import { onMounted, ref,h ,render, watch} from 'vue'
-import LoginForm from './LoginForm.vue';
 import AppointmentForm from './AppointmentForm.vue';
 import AppointmentEditForm from './AppointmentEditForm.vue';
 import {  DatePicker } from 'v-calendar';
 import 'v-calendar/style.css';
-
-
-
 const TimeSlotHeight = 40
 
 const currentDisplayedDate = ref(new Date()); 
@@ -26,7 +22,6 @@ const formattedDate = ref(new Date(currentDisplayedDate.value - tzoffset).toISOS
 onMounted(() => {
 reload()
 })
-
 function generateResources() {
   fetch('http://127.0.0.1:8000/api/technicians/?Date='+formattedDate.value, { 
         credentials: 'include'
@@ -43,8 +38,7 @@ function generateResources() {
         })
 
        
-  }
-        
+  } 
 function getPosition(time, duration){
     const startHour = parseInt(time.split(':')[0]);
     const startMinute = parseInt(time.split(':')[1]);    
@@ -55,13 +49,7 @@ function getPosition(time, duration){
         height: eventHeight+"px"
     }
 }
-
-
-
-
 function renderEvents() {
-
-
      fetch("http://127.0.0.1:8000/api/appointments/?Date="+formattedDate.value, { 
         credentials: 'include'
      }) 
@@ -77,7 +65,6 @@ function renderEvents() {
 
    
 }
-
 function reload(){
   formattedDate.value = new Date(currentDisplayedDate.value - tzoffset).toISOString().slice(0, -1).split('T')[0]
   generateResources()
@@ -93,19 +80,14 @@ function openAppointmentForm(i) // 1 i = 15 minutes
     appStartTime.value = date
     showAppointmentForm.value=!showAppointmentForm.value
 }
-
 function openAppointmentEditForm(appID)
 {   
     appIDEdit.value = appID
     showAppointmentEditForm.value=!showAppointmentEditForm.value
 }
-
-
-
 </script>
 
 <template>
-<LoginForm />
 <AppointmentForm v-if="showAppointmentForm" @close-form="showAppointmentForm=false" :startTime="appStartTime" :date="formattedDate.slice(0, 10)" :techs="resources" :callReload="reload"/>
 <AppointmentEditForm v-if="showAppointmentEditForm" @close-form="showAppointmentEditForm=false" :techs="resources" :appID="appIDEdit" :callReload="reload"/>
 

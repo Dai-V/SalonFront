@@ -1,11 +1,20 @@
 <script setup>
-import ScheduleContainer from './components/ScheduleContainer.vue';
+import SideNavbar from './components/SideNavbar.vue';
+
+
 </script>
 
+
+
 <template>
-  <ScheduleContainer />
+  <body>
+  <SideNavbar />
+  <RouterView />
+  </body>
 </template>
 
 <style scoped>
-
+body {
+    padding-left: 250px;
+}
 </style>

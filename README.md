@@ -9,7 +9,6 @@ Functioning Features:
 + Logout
 
 Todos:
-
 - Appointments:
 + Cancel Appointment
 
