@@ -8,6 +8,8 @@ Appointments:
 
 Technicians:
 + View 
++ Create
++ Edit
 
 Authentication:
 + Login
@@ -22,11 +24,8 @@ Saved Services:
 + Edit
 + Delete
 
-Technicians:
-+ View
-+ Create
-+ Edit
-+ Delete
+Schedule:
++ Add Schedule 
 
 Totals/Reports:
 + View totals within a range (including single date)
