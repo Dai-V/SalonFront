@@ -66,7 +66,8 @@ getTechnicians()
 <style scoped>
 .data-table {
   width: 100%;
-  border-collapse: collapse; /* Collapses borders between cells */
+  border-collapse: collapse; 
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 .add-tech { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; margin-top:10px }
 
@@ -74,7 +75,8 @@ getTechnicians()
   border: 1px solid #ddd; /* Adds borders to cells */
   padding: 15px; /* Adds padding inside cells */
   text-align: left; /* Aligns text to the left */
-  cursor:pointer
+  cursor:pointer;
+  
 }
 
 .data-table th {

@@ -137,8 +137,7 @@ function openAppointmentEditForm(appID)
 <style scoped>
 .schedule-container {
     font-family: Arial, sans-serif;
-    max-width: 1200px;
-    margin: 20px auto;
+    width:100%;
     border: 1px solid #ccc;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }

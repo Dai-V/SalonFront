@@ -114,6 +114,7 @@ function logoutClick(){
   top: 0;
   transition: width 0.3s;
   overflow: hidden;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
   
 }
 
