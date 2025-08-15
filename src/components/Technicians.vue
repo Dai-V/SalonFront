@@ -2,11 +2,15 @@
 import { ref } from 'vue'
 import { useAuthStore } from '../stores/auth';
 import { useRouter } from 'vue-router';
+import TechnicianForm from './TechnicianForm.vue';
+import TechnicianEditForm from './TechnicianEditForm.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
 const techList = ref ([])
-
+const showTechnicianForm = ref(false)
+const techIDEdit = ref(null)
+const showTechnicianEditForm = ref(false)
 function getTechnicians() {
      fetch("http://127.0.0.1:8000/api/technicians/", { 
         credentials: 'include',
@@ -25,11 +29,16 @@ function getTechnicians() {
 
 
 }
-
+function openTechnicianEditForm(techID) {
+    showTechnicianEditForm.value=!showTechnicianEditForm.value
+    techIDEdit.value = techID
+}
 getTechnicians()
 </script>
 
 <template>
+<TechnicianForm v-if="showTechnicianForm" @close-form="showTechnicianForm=!showTechnicianForm" />
+<TechnicianEditForm v-if="showTechnicianEditForm" @close-form="showTechnicianEditForm=!showTechnicianEditForm" :techID="techIDEdit" :callReload="getTechnicians"/>
 <table class="data-table">
 <thead>
    <tr>
@@ -41,7 +50,7 @@ getTechnicians()
   </tr>
 </thead>
   <tbody>
-    <tr v-for="tech in techList">
+    <tr v-for="tech in techList" @click="openTechnicianEditForm(tech.TechID)">
         <td> {{tech.TechID}} </td>
         <td> {{tech.TechName}} </td>
         <td> {{tech.TechPhone}} </td>
@@ -51,7 +60,7 @@ getTechnicians()
 
   </tbody>
 </table>
- <button type="button" class="add-tech" @click="openTechForm()">+ Add</button>
+ <button type="button" class="add-tech" @click="showTechnicianForm=!showTechnicianForm">+ Add</button>
 </template>
 
 <style scoped>

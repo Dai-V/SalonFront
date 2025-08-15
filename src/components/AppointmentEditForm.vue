@@ -203,7 +203,7 @@ getAppointment()
 
       <div class="actions">
         <button type="button" class="btn-ghost" v-on:click="$emit('closeForm')">Cancel</button>
-        <button type="submit" class="primary">Save Appointment</button>
+        <button type="submit" class="primary">Save</button>
       </div>
    </form>
   </div>
@@ -211,7 +211,7 @@ getAppointment()
 </template>
 
 <style scoped>
-button.primary { background:#4f46e5; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
 button.secondary { background:#e25454; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
 .modal-card { width:700px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
