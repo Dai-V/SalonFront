@@ -5,12 +5,16 @@ import App from './App.vue'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import ScheduleContainer from './components/ScheduleContainer.vue';
 import LoginForm from './components/LoginForm.vue';
+import SignupForm from './components/SignupForm.vue'
+import Technicians from './components/Technicians.vue'
 const pinia = createPinia()
 const routes = [
   { path: '/', name:'Dashboard', component: ScheduleContainer,  meta: { icon: '📊'  }},
   { path: '/appointments', name:'Appointments', component: ScheduleContainer,  meta: { icon: '📅'  }},
+  { path: '/technicians', name:'Technicians', component: Technicians,  meta: { icon: '👨' }},
 //   { path: '/settings', name:'Settings',component: LoginForm ,  meta: { icon: '⚙️' }},
   { path: '/login', name:'Login' ,component: LoginForm,  meta: { icon:'🔑' } },
+    { path: '/signup', name:'Signup' ,component: SignupForm,  meta: { icon:'🔑' } },
 ]
 
 const router = createRouter({

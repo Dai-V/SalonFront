@@ -5,9 +5,11 @@ import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const passError = ref('')
+const usernameError = ref('')
 
-function loginFormClick(event){
-    fetch('http://127.0.0.1:8000/api/login/', {
+function signupFormClick(event){
+    fetch('http://127.0.0.1:8000/api/signup/', {
             method: 'POST',
             headers: new Headers({
                         'Accept': 'application/json',
@@ -20,13 +22,15 @@ function loginFormClick(event){
         }
         ).then(response => {
             if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
             }
             else {
-            authStore.login(response.headers.get("x-csrftoken"))
-            router.push('/')
+            router.push('/login')
             }
             return response.json();
+        })
+        .then(data => {
+            passError.value = data.password
+            usernameError.value = data.username
         })
    }
 
@@ -37,18 +41,24 @@ function loginFormClick(event){
 <template>
 
 
-<div id="loginFormContainer"  class="form-container" @submit.prevent="loginFormClick">
-  <form id="login-form" >
-    <h1 id="login-form-text">Login</h1>
-
+<div  class="form-container" @submit.prevent="signupFormClick">
+  <form  >
+    <h1>Sign Up</h1>
+    <div class="success">
+    {{  success }}
+    </div>
     <label  for="username"><b>Username</b></label>
     <input type="text" v-model="username" placeholder="Enter Username" name="username" required>
-
+     <div class="error">
+    {{  usernameError }}
+    </div>
+    
     <label for="password"><b>Password</b></label>
     <input type="password"v-model="password" placeholder="Enter Password" name="password" required>
-
-    <button type="submit" class="btn">Login</button>
-    <button type="button" class="btn" style="background-color:blue" @click="router.push('/signup')">Sign Up</button>
+     <div class="error">
+    {{  passError }}
+    </div>
+    <button type="submit" class="btn">Sign Up</button>
   </form>
 </div>
 </template>
@@ -80,6 +90,11 @@ function loginFormClick(event){
 /* When the inputs get focus, do something */
 .form-container input[type=text]:focus, .form-container input[type=password]:focus {
   background-color: #ddd;
+  outline: none;
+}
+
+.error {
+  color: #db0505;
   outline: none;
 }
 

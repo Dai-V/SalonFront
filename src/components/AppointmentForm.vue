@@ -115,6 +115,7 @@ function appSubmit() {
           <select v-model="appStatus" id="AppStatus" name="AppStatus">
             <option>Open</option>
             <option>Closed</option>
+            <option>Cancelled</option>
           </select>
         </div>
       </div>
