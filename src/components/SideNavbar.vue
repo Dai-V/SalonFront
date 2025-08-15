@@ -66,28 +66,28 @@ function logoutClick(){
         <div v-for="route in navRoutes" >
         <li v-if="route.name!=='Login' && route.name!=='Signup'">
             <router-link :to="route.path" :key="route.name">
-            <i class="icon"> {{  route.meta.icon  }}</i>
+            <div class="icon"> {{  route.meta.icon  }}</div>
             <span v-if="!isCollapsed" class="label">{{ route.name }}</span>
             </router-link>
         </li>
         </div>
         <li v-if="authStore.isLoggedIn" style="position:absolute;bottom:50px; width:87%;cursor: pointer;"  >
           <a @click="logoutClick()">
-            <i class="icon"> 🚪 </i>
+            <div class="icon"> 🚪 </div>
             <span v-if="!isCollapsed" class="label">Logout</span>
           </a>
     </li>
          <div v-else>
           <li style="position:absolute;bottom:50px;width:87%;cursor: pointer;">
             <a @click="router.push('/signup')">
-            <i class="icon"> 🔑 </i>
+            <div class="icon"> 🔑 </div>
             <span v-if="!isCollapsed" class="label">Sign Up</span>
             </a>
             
           </li>
           <li style="position:absolute;bottom:110px;width:87%;cursor: pointer;">
             <a @click="router.push('/login')">
-            <i class="icon"> 🔑 </i>
+            <div class="icon"> 🔑 </div>
             <span v-if="!isCollapsed" class="label">Login</span>
             </a>
             

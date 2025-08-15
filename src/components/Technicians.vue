@@ -51,6 +51,7 @@ getTechnicians()
 
   </tbody>
 </table>
+ <button type="button" class="add-tech" @click="openTechForm()">+ Add</button>
 </template>
 
 <style scoped>
@@ -58,12 +59,13 @@ getTechnicians()
   width: 100%;
   border-collapse: collapse; /* Collapses borders between cells */
 }
-
+.add-tech { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; margin-top:10px }
 
 .data-table td {
   border: 1px solid #ddd; /* Adds borders to cells */
   padding: 15px; /* Adds padding inside cells */
   text-align: left; /* Aligns text to the left */
+  cursor:pointer
 }
 
 .data-table th {
