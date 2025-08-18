@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { useAuthStore } from '../stores/auth';
+import { useAuthStore } from '../../stores/auth';
 import { useRouter } from 'vue-router';
 import TechnicianForm from './TechnicianForm.vue';
 import TechnicianEditForm from './TechnicianEditForm.vue';

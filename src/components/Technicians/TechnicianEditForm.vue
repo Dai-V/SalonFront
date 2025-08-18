@@ -1,34 +1,50 @@
 <script setup>
 import {ref,defineEmits} from 'vue'
-import ServiceRow from './ServiceRow.vue'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '../../stores/auth'
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
+techID:Number,
 callReload:Function,
-
 })
 const authStore = useAuthStore();
+const techID = ref(props.techID)
 const techName = ref('')
 const techEmail = ref('')
 const techPhone = ref('')
 const techInfo = ref('')
-const nameError = ref('')
-const emailError = ref('')
-const infoError = ref('')
-const phoneError = ref('')
 
-
+function getTechnician(){
+    fetch('http://127.0.0.1:8000/api/technicians/'+props.techID+'/', { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+         'X-CSRFTOKEN': authStore.csrftoken
+      },
+      credentials: 'include',
+    })
+      .then(response => response.json())
+      .then(data => {
+        techName.value = data.TechName
+        techEmail.value = data.TechEmail,
+        techPhone.value = data.TechPhone,
+        techInfo.value = data.TechInfo
+      })
+      .catch(error => {
+        console.error(error);
+    });
+}
 
 function appSubmit() {
     const postData = {
+        TechID: techID.value,
         TechName: techName.value,
         TechEmail: techEmail.value,
         TechPhone: techPhone.value,
-        techInfo: techInfo.value
+        TechInfo: techInfo.value
     }
-    fetch('http://127.0.0.1:8000/api/technicians/', { 
-      method: 'POST',
+    fetch('http://127.0.0.1:8000/api/technicians/'+techID.value + '/', { 
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
          'X-CSRFTOKEN': authStore.csrftoken
@@ -36,25 +52,18 @@ function appSubmit() {
       credentials: 'include',
       body: JSON.stringify(postData) 
     })
-      .then(response => {
-        if (response.ok){
-          emit('CloseForm')
-          props.callReload()
-        } 
-        return  response.json()
-      })
-     
+      .then(response => response.json())
       .then(data => {
-        nameError.value = data.TechName,
-        emailError.value = data.TechEmail,
-        phoneError.value = data.TechPhone,
-        infoError.value = data.TechInfo
+        console.log('Response from server:', data);
+        props.callReload()
+        emit('closeForm')
       })
       .catch(error => {
         console.error('Error posting custom data:', error);
+        emit('closeForm')
     });
 }
-
+getTechnician()
 </script>
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
@@ -80,7 +89,7 @@ function appSubmit() {
         </div>
         <div>
       <label>Comment</label>
-      <input v-model="techInfo" ></input>
+      <textarea v-model="techInfo" rows="2"></textarea>
       <p class="error"> {{ infoError }} </p>
       </div>
 

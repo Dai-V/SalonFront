@@ -19,6 +19,12 @@ Saved Services:
 + Delete
 + Search
 
+Customers:
++ Search
++ View
++ Create
++ Edit 
+
 Authentication:
 + Login
 + Logout
@@ -29,17 +35,9 @@ Todos:
 Appointment:
 + Searchable dropdown for customer while making appointment
 
-
-
-Customers:
-+ Search
-+ View
-+ Create
-+ Edit 
-
 Schedule:
 + Add Schedule 
 
-Totals/Reports:
+Dashboard Totals/Reports:
 + View totals within a range (including single date)
 

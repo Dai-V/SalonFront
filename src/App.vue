@@ -1,5 +1,5 @@
 <script setup>
-import SideNavbar from './components/SideNavbar.vue';
+import SideNavbar from './components/Navbar/SideNavbar.vue';
 
 
 </script>

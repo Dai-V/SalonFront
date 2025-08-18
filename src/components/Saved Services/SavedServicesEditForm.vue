@@ -1,6 +1,6 @@
 <script setup>
 import {ref,defineEmits} from 'vue'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '../../stores/auth'
 import { errorMessages } from 'vue/compiler-sfc';
 
 const emit = defineEmits(['closeForm'])

@@ -1,28 +1,28 @@
 <script setup>
 import {ref,defineEmits} from 'vue'
 import ServiceRow from './ServiceRow.vue'
-import { useAuthStore } from '../stores/auth'
+import { useAuthStore } from '../../stores/auth'
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
-  startTime: Date,
-  date:Date,
   techs:Array,
   callReload: Function,
+  appID:Number,
+  customerID:Number,
 
 })
 const authStore = useAuthStore();
 const services = ref([]);
 const servicesForm = ref([]);
-const serviceStartTime = ref('00:00:00')
-
 const appDate = ref(props.date);
 const appComment = ref("");
 const appStatus = ref("Open");
 const appTotal = ref(0);
 const paymentType =ref("Visa");
-const customerID = ref("1")
+const customerID = ref(props.customerID)
 const customerList = ref('')
+
+
 let serviceID = 0;
 
 function getCustomerList() {
@@ -43,21 +43,22 @@ function getCustomerList() {
 
       });
 }
-
 function addService()  {
-  let hour = props.startTime.getHours()
-  let minute = props.startTime.getMinutes()
-  hour = hour < 10 ? '0' + hour : hour;
-  minute = minute < 10 ? '0' + minute : minute;
-  serviceStartTime.value = hour + ":" + minute
-  services.value.push({serviceStartTime:serviceStartTime.value,
-    id: serviceID
+  services.value.push({ 
+    id: serviceID,
+    serviceStartTime:"00:00",
+    serviceDuration:0,
+    serviceName:"",
+    serviceCode:"",
+    servicePrice:0,
+    techID: ""
    });
   serviceID++;
 };
 
 const removeService = (id) => {
   services.value = services.value.filter(service => service.id!==id);
+  servicesForm.value = servicesForm.value.filter(service => service.id!==id)
 }
 
 const updateServices = (service) => {
@@ -66,6 +67,53 @@ const updateServices = (service) => {
     else {
       servicesForm.value[service.id] = service
     }
+}
+function getAppointment() {
+  fetch('http://127.0.0.1:8000/api/appointments/'+props.appID, { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+         'X-CSRFTOKEN': authStore.csrftoken
+      },
+      credentials: 'include',
+    })
+      .then(response => 
+    {
+      if (response.status === 403) {
+        throw new Error("Not Authenticated")
+      }
+      if (response.status === 404) {
+        throw new Error("Appointment not found")
+      }
+      return response.json()
+    })
+      .then(data => {
+        console.log('Response from server:', data);
+        for (let service in data.Services){
+       services.value.push({ 
+    id: serviceID,
+    serviceStartTime:data.Services[service].ServiceStartTime,
+    serviceDuration:data.Services[service].ServiceDuration,
+    serviceName:data.Services[service].ServiceName,
+    serviceCode:data.Services[service].ServiceCode,
+    servicePrice:data.Services[service].ServicePrice,
+    techID: data.Services[service].TechID
+
+          });
+        serviceID++;
+        }
+        appDate.value = data.AppDate
+        appComment.value = data.AppComment
+        appStatus.value = data.AppStatus
+        appTotal.value = data.AppTotal
+        paymentType.value = data.PaymentType
+
+      })
+      .catch(error => {
+        console.error('Error posting custom data:', error);
+        emit('closeForm')
+
+      });
 }
 
 function appSubmit() {
@@ -92,12 +140,11 @@ function appSubmit() {
         TechID: servicesForm.value[i].tech
 
       }
-      console.log(service)
       postData.Services.push(service)
     }
 
-    fetch('http://127.0.0.1:8000/api/appointments/', { 
-      method: 'POST',
+    fetch('http://127.0.0.1:8000/api/appointments/'+props.appID+'/', { 
+      method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
          'X-CSRFTOKEN': authStore.csrftoken
@@ -118,19 +165,22 @@ function appSubmit() {
 
       });
 }
+getAppointment()
 getCustomerList()
 </script>
 
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
-    <h2 id="modalTitle">Book Appointment</h2>
-    <form id="bookingForm" @submit.prevent="appSubmit()">
+    <h2 id="modalTitle">Edit Appointment</h2>
+     <form id="bookingForm" @submit.prevent="appSubmit()">
        <div class="grid">
         <div>
           <label>Customer</label>
           <select v-model="customerID" type="number" required>
-            <option  v-for="customer in customerList" :value="customer.CustomerID"> {{ customer.CustomerFirstName }} {{customer.CustomerLastName }} {{customer.CustomerPhone}}</option>
+            <option  v-for="customer in customerList" :value="customer.CustomerID">
+               {{ customer.CustomerFirstName }} {{customer.CustomerLastName }} {{customer.CustomerPhone}}
+            </option>
             
           </select>
         </div>
@@ -173,8 +223,13 @@ getCustomerList()
         <label>Services</label>
       <div id="servicesContainer">
         <div v-for="service in services" :key="service.id">
-        <ServiceRow :serviceStartTime="service.serviceStartTime" :techs="props.techs" :id=service.id
-         @emit-changes="updateServices" @remove-service="removeService"
+        <ServiceRow  :techs="props.techs" :id="service.id"
+         @emit-changes="updateServices" @remove-service="removeService" :serviceName="service.serviceName"
+  :servicePrice="service.servicePrice"
+  :serviceStartTime="service.serviceStartTime" 
+  :serviceDuration="service.serviceDuration"
+  :selectedTech="service.techID"
+  :selectedOption="service.serviceCode"
          />
         </div>
       </div>
@@ -184,7 +239,7 @@ getCustomerList()
       <div class="actions">
         <button type="submit" class="primary">Save</button>
         <button type="button" class="btn-ghost" v-on:click="$emit('closeForm')">Cancel</button>
-        
+     
       </div>
    </form>
   </div>
@@ -193,6 +248,7 @@ getCustomerList()
 
 <style scoped>
 button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+button.secondary { background:#e25454; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
 .modal-card { width:700px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:25px; }
@@ -205,7 +261,5 @@ input, select, textarea { width:90%; padding:8px 10px; border-radius:8px; border
 .small { font-size:13px; color:#64748b; margin-top:6px; }
 .two-cols { display:flex; gap:10px; margin-top:10px; }
 .remove-btn { color:#dc2626; border-color:#fca5a5; }
-
-
 
 </style>
