@@ -37,7 +37,7 @@ getTechnicians()
 </script>
 
 <template>
-<TechnicianForm v-if="showTechnicianForm" @close-form="showTechnicianForm=!showTechnicianForm" />
+<TechnicianForm v-if="showTechnicianForm" @close-form="showTechnicianForm=!showTechnicianForm" :callReload="getTechnicians" />
 <TechnicianEditForm v-if="showTechnicianEditForm" @close-form="showTechnicianEditForm=!showTechnicianEditForm" :techID="techIDEdit" :callReload="getTechnicians"/>
 <table class="data-table">
 <thead>

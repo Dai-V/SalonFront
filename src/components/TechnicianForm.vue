@@ -13,6 +13,7 @@ const techName = ref('')
 const techEmail = ref('')
 const techPhone = ref('')
 const techInfo = ref('')
+const errMsg = ref('')
 
 
 function appSubmit() {
@@ -31,14 +32,19 @@ function appSubmit() {
       credentials: 'include',
       body: JSON.stringify(postData) 
     })
-      .then(response => response.json())
+      .then(response => {
+        if (response.ok){
+          emit('CloseForm')
+          props.callReload()
+        } 
+        return  response.json()
+      })
+     
       .then(data => {
         console.log('Response from server:', data);
-        emit('closeForm')
       })
       .catch(error => {
         console.error('Error posting custom data:', error);
-        emit('closeForm')
     });
 }
 

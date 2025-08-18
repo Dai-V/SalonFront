@@ -16,7 +16,7 @@ const techPhone = ref('')
 const techInfo = ref('')
 
 function getTechnician(){
-    fetch('http://127.0.0.1:8000/api/technicians/'+props.techID, { 
+    fetch('http://127.0.0.1:8000/api/technicians/'+props.techID+'/', { 
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -32,8 +32,7 @@ function getTechnician(){
         techInfo.value = data.TechInfo
       })
       .catch(error => {
-        console.error('Error posting custom data:', error);
-        emit('closeForm')
+        console.error(error);
     });
 }
 
