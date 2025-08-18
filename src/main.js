@@ -9,9 +9,10 @@ import SignupForm from './components/Auth/SignupForm.vue';
 import Technicians from './components/Technicians/Technicians.vue'
 import SavedServices from './components/Saved Services/SavedServices.vue'
 import Customers from './components/Customers/Customers.vue'
+import Dashboard from './components/Dashboard/DashBoardSingleDate.vue'
 const pinia = createPinia()
 const routes = [
-  { path: '/', name:'Dashboard', component: ScheduleContainer,  meta: { icon: '📊'  }},
+  { path: '/', name:'Dashboard', component: Dashboard,  meta: { icon: '📊'  }},
   { path: '/appointments', name:'Appointments', component: ScheduleContainer,  meta: { icon: '📅'  }},
   { path: '/technicians', name:'Technicians', component: Technicians,  meta: { icon: '👨' }},
    { path: '/savedservices', name:'Saved Services', component: SavedServices,  meta: { icon: '🛎️' }},

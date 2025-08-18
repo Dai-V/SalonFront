@@ -124,7 +124,12 @@ function openAppointmentEditForm(appID,customerID)
                         height: getPosition(service.ServiceStartTime,service.ServiceDuration).height,
                         lineHeight: getPosition(service.ServiceStartTime,service.ServiceDuration).height
                      }">
+                     <div v-if="app.AppStatus==='Closed'" class="closedEvent">
                     {{ service.ServiceName }}
+                    </div>
+                    <div v-else-if="app.AppStatus==='Open'" class="openEvent" >
+                    {{ service.ServiceName }}
+                    </div>
                     </div>
                     </div>
                 </div>
@@ -226,7 +231,7 @@ function openAppointmentEditForm(appID,customerID)
 .event {
     position: absolute;
     background-color: #a0c4ff;
-    border: 1px solid #6a9eff;
+    border: 1px solid;
     border-radius: 1px;
     font-size: 1.5em;
     overflow: hidden;
@@ -239,8 +244,22 @@ function openAppointmentEditForm(appID,customerID)
     width: 100%;
 }
 
-.event:hover {
-  background-color: green
+
+.closedEvent {
+    background-color: rgb(170, 168, 168);
+    border-color:black;
+}
+
+.closedEvent:hover,.openEvent:hover{
+    background-color:lightgreen;
+    border-color:black;
+}
+
+
+
+.openEvent {
+   background-color: #a0c4ff;;
+   border-color:green
 }
 
 </style>
