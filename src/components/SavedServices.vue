@@ -8,6 +8,7 @@ import SavedServicesEditForm from './SavedServicesEditForm.vue';
 
 const router = useRouter();
 const authStore = useAuthStore();
+const fullSavedServicesList = ref([])
 const savedServicesList = ref ([])
 const showSavedServicesForm = ref(false)
 const showSavedServicesEditForm = ref(false)
@@ -27,25 +28,22 @@ function getSavedServices() {
         })
       .then(data => {
             savedServicesList.value = data
+            fullSavedServicesList.value = data
             
       })
 
 
 }
 function search() {
-  if (searchQuery.value === '')
-      {
-        getSavedServices()
-      }
-  else {
-    savedServicesList.value = savedServicesList.value.filter(x => x.ServiceCode.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+
+    savedServicesList.value = fullSavedServicesList.value.filter(x => x.ServiceCode.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
   x.ServiceName.toLowerCase().includes(searchQuery.value.toLowerCase()) || 
   (x.ServiceDescription?x.ServiceDescription:'').toLowerCase().includes(searchQuery.value.toLowerCase()) || 
     x.ServicePrice.includes(searchQuery.value) || 
 x.ServiceDuration.toString().includes(searchQuery.value)
     )
   }
-}
+
 
 getSavedServices()
 

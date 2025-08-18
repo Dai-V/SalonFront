@@ -8,6 +8,7 @@ import TechnicianEditForm from './TechnicianEditForm.vue';
 const router = useRouter();
 const authStore = useAuthStore();
 const techList = ref ([])
+const fullTechList = ref([])
 const showTechnicianForm = ref(false)
 const techIDEdit = ref(null)
 const showTechnicianEditForm = ref(false)
@@ -25,6 +26,7 @@ function getTechnicians() {
         })
       .then(data => {
             techList.value = data
+            fullTechList.value = data
             
       })
 
@@ -36,19 +38,14 @@ function openTechnicianEditForm(techID) {
 }
 
 function search() {
-  if (searchQuery.value === '')
-      {
-        getTechnicians()
-      }
-  else {
-    techList.value = techList.value.filter(x => x.TechName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    techList.value = fullTechList.value.filter(x => x.TechName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
   x.TechPhone.includes(searchQuery.value) || 
     (x.TechEmail?x.TechEmail:'').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
   (x.TechInfo?x.TechInfo:'').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
   (x.TechID).toString().includes(searchQuery.value.toLowerCase())
 )
   }
-}
+
 
 getTechnicians()
 </script>
