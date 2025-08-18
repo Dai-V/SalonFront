@@ -69,29 +69,30 @@ getTechnician()
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <div class="modal-card">
-    <h2 id="modalTitle">Edit Technician</h2>
+    <h2 id="modalTitle">Add Technician</h2>
     <form id="bookingForm" @submit.prevent="appSubmit()">
-      <div class="grid">
         <div>
           <label>Name</label>
           <input v-model="techName" type="text" required>
+          <p class="error"> {{ nameError }} </p>
         </div>
    
-      </div>
 
-      <div class="two-cols">
         <div>
           <label>Email</label>
           <input v-model="techEmail" type="email" >
+          <p class="error"> {{ emailError }} </p>
         </div>
         <div>
            <label >Phone</label>
           <input type="number" v-model="techPhone"> 
+          <p class="error"> {{ phoneError }} </p>
         </div>
-      </div>
-
+        <div>
       <label>Comment</label>
       <input v-model="techInfo" ></input>
+      <p class="error"> {{ infoError }} </p>
+      </div>
 
 
       <div class="actions">
@@ -106,16 +107,16 @@ getTechnician()
 <style scoped>
 button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
-.modal-card { width:700px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
+.modal-card { width:600px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:25px; }
 .grid { display:grid; grid-template-columns: 1fr 120px; gap:10px; align-items:center; }
-label { font-size:15px; color:#334155; }
-input, select, textarea { width:90%; padding:8px 10px; border-radius:8px; border:1px solid #e6eef7; background:#fbfdff; }
+label { display:block;width:100%; font-size:18px; color:#334155; }
+input, select, textarea { display:inline-block;width:30%; padding:8px 10px 10px 10px; border-radius:8px; border:1px solid #e6eef7; background:#f0f0f0; }
 .actions { display:flex; gap:8px; margin-top:14px; justify-content:flex-end; }
 .btn-ghost { background:transparent; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; }
-.add-service { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; }
+.add-btn { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; }
 .small { font-size:13px; color:#64748b; margin-top:6px; }
-.two-cols { display:flex; gap:10px; margin-top:10px; }
-.remove-btn { color:#dc2626; border-color:#fca5a5; }
 
+.remove-btn { color:#dc2626; border-color:#fca5a5; }
+.error {color:red; padding:8px 10px 10px 10px; display:inline; width: 40%;}
 </style>

@@ -163,8 +163,8 @@ button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px;
 .modal-card { width:600px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:25px; }
 .grid { display:grid; grid-template-columns: 1fr 120px; gap:10px; align-items:center; }
-label { display:block;width:100%; font-size:20px; color:#334155; }
-input, select, textarea { display:inline-block;width:30%; padding:8px 10px 10px 10px; border-radius:8px; border:1px solid #e6eef7; background:#fbfdff; }
+label { display:block;width:100%; font-size:18px; color:#334155; }
+input, select, textarea { display:inline-block;width:30%; padding:8px 10px 10px 10px; border-radius:8px; border:1px solid #e6eef7; background:#f0f0f0; }
 .actions { display:flex; gap:8px; margin-top:14px; justify-content:flex-end; }
 .btn-ghost { background:transparent; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; }
 .add-btn { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; }
