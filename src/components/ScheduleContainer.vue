@@ -15,6 +15,7 @@ const apps = ref(null)
 const showAppointmentForm = ref(false)
 const showAppointmentEditForm = ref(false)
 const appIDEdit = ref(null)
+const customerIDEdit = ref(null)
 const appStartTime = ref('00:00:00')
 const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds 
 const formattedDate = ref(new Date(currentDisplayedDate.value - tzoffset).toISOString().slice(0, -1).split('T')[0]); // get correct date
@@ -80,16 +81,17 @@ function openAppointmentForm(i) // 1 i = 15 minutes
     appStartTime.value = date
     showAppointmentForm.value=!showAppointmentForm.value
 }
-function openAppointmentEditForm(appID)
+function openAppointmentEditForm(appID,customerID)
 {   
     appIDEdit.value = appID
+    customerIDEdit.value = customerID
     showAppointmentEditForm.value=!showAppointmentEditForm.value
 }
 </script>
 
 <template>
 <AppointmentForm v-if="showAppointmentForm" @close-form="showAppointmentForm=false" :startTime="appStartTime" :date="formattedDate.slice(0, 10)" :techs="resources" :callReload="reload"/>
-<AppointmentEditForm v-if="showAppointmentEditForm" @close-form="showAppointmentEditForm=false" :techs="resources" :appID="appIDEdit" :callReload="reload"/>
+<AppointmentEditForm v-if="showAppointmentEditForm" @close-form="showAppointmentEditForm=false" :techs="resources" :appID="appIDEdit" :customerID="customerIDEdit" :callReload="reload"/>
 
 <div class="schedule-container">
     <div class="schedule-header">
@@ -116,7 +118,7 @@ function openAppointmentEditForm(appID)
            <div v-for="(resource) in resources" class="resource-column">
                 <div class="resource-header"> {{ resource.TechName }} </div>
                 <div v-for="i in 24*4" class="time-slot-placeholder" @click="openAppointmentForm(i-1)"> </div> 
-                <div v-for="app in apps" @click="openAppointmentEditForm(app.AppID)"> 
+                <div v-for="app in apps" @click="openAppointmentEditForm(app.AppID,app.CustomerID)"> 
                     <div v-for="service in app.Services">
                         <div v-if="service.TechID === resource.TechID" class="event" :style="{top: getPosition(service.ServiceStartTime,service.ServiceDuration).top,
                         height: getPosition(service.ServiceStartTime,service.ServiceDuration).height,

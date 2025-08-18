@@ -21,8 +21,28 @@ const appComment = ref("");
 const appStatus = ref("Open");
 const appTotal = ref(0);
 const paymentType =ref("Visa");
+const customerID = ref("1")
+const customerList = ref('')
 let serviceID = 0;
 
+function getCustomerList() {
+   fetch('http://127.0.0.1:8000/api/customers/', { 
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+         'X-CSRFTOKEN': authStore.csrftoken
+      },
+      credentials: 'include',
+    })
+      .then(response => response.json())
+      .then(data => {
+        customerList.value = data
+
+      })
+      .catch(error => {
+
+      });
+}
 
 function addService()  {
   let hour = props.startTime.getHours()
@@ -58,7 +78,7 @@ function appSubmit() {
       AppDate: appDate.value,
       AppStatus: appStatus.value,
       PaymentType: paymentType.value,
-      CustomerID: 1,
+      CustomerID: customerID.value,
       Services: []
 
     };
@@ -98,6 +118,7 @@ function appSubmit() {
 
       });
 }
+getCustomerList()
 </script>
 
 <template>
@@ -105,6 +126,16 @@ function appSubmit() {
   <div class="modal-card">
     <h2 id="modalTitle">Book Appointment</h2>
     <form id="bookingForm" @submit.prevent="appSubmit()">
+       <div class="grid">
+        <div>
+          <label>Customer</label>
+          <select v-model="customerID" type="number" required>
+            <option  v-for="customer in customerList" :value="customer.CustomerID"> {{ customer.CustomerFirstName }} {{customer.CustomerLastName }} {{customer.CustomerPhone}}</option>
+            
+          </select>
+        </div>
+        
+      </div>
       <div class="grid">
         <div>
           <label for="AppDate">Date</label>
@@ -173,5 +204,7 @@ input, select, textarea { width:90%; padding:8px 10px; border-radius:8px; border
 .small { font-size:13px; color:#64748b; margin-top:6px; }
 .two-cols { display:flex; gap:10px; margin-top:10px; }
 .remove-btn { color:#dc2626; border-color:#fca5a5; }
+
+
 
 </style>

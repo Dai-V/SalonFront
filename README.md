@@ -11,6 +11,11 @@ Technicians:
 + Create
 + Edit
 
+Saved Services:
++ View
++ Create
++ Edit
+
 Authentication:
 + Login
 + Logout
@@ -19,9 +24,6 @@ Authentication:
 Todos:
 
 Saved Services:
-+ View
-+ Create
-+ Edit
 + Delete
 
 Schedule:
