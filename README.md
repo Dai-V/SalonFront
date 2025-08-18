@@ -23,8 +23,21 @@ Authentication:
 
 Todos:
 
+Appointment:
++ Searchable dropdown for customer while making appointment
+
 Saved Services:
++ Search
 + Delete
+
+Technicians:
++ Search
+
+Customers:
++ Search
++ View
++ Create
++ Edit 
 
 Schedule:
 + Add Schedule 

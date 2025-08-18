@@ -113,7 +113,7 @@ function appSubmit() {
           <div class="two-cols">
         <div>
         <label> Description </label> 
-          <input type="text" v-model="serviceDescription" > </input>
+          <textarea  v-model="serviceDescription" rows="2"> </textarea>
           <p class="error"> {{ descriptionError }} </p>
         </div>
         <div>
@@ -123,9 +123,9 @@ function appSubmit() {
 
      
 
-      <div class="actions">
-        <button type="button" class="btn-ghost" v-on:click="$emit('closeForm')">Cancel</button>
+      <div class="actions"> 
         <button type="submit" class="primary">Save</button>
+        <button type="button" class="btn-ghost" v-on:click="$emit('closeForm')">Cancel</button>
       </div>
    </form>
   </div>
@@ -134,13 +134,15 @@ function appSubmit() {
 
 <style scoped>
 button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+button.delete { background:#970101; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer;margin-left: auto;} 
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
 .modal-card { width:600px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:25px; }
 .grid { display:grid; grid-template-columns: 1fr 120px; gap:10px; align-items:center; }
 label { display:block;width:100%; font-size:18px; color:#334155; }
 input, select, textarea { display:inline-block;width:30%; padding:8px 10px 10px 10px; border-radius:8px; border:1px solid #e6eef7; background:#f0f0f0; }
-.actions { display:flex; gap:8px; margin-top:14px; justify-content:flex-end; }
+.actions { display:flex; gap:8px; margin-top:14px;   justify-content: flex-start; }
+.del-actions { display:flex; gap:8px; margin-top:14px;  }
 .btn-ghost { background:transparent; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; }
 .add-btn { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; }
 .small { font-size:13px; color:#64748b; margin-top:6px; }
