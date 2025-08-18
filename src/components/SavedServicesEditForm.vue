@@ -80,6 +80,30 @@ function appSubmit() {
         console.error('Error posting custom data:', error);
     });
 }
+
+function deleteSavedService() {
+    fetch('http://127.0.0.1:8000/api/savedservices/'+props.ServiceID+'/', { 
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+         'X-CSRFTOKEN': authStore.csrftoken
+      },
+      credentials: 'include',
+    })
+      .then(response => {
+        if (response.ok){
+          emit('CloseForm')
+          props.callReload()
+        } 
+        return  response.json()
+      })
+      .then(data => {
+        console.log('Response from server:', data);
+      })
+      .catch(error => {
+        console.error('Error posting custom data:', error);
+    });
+}
 getSavedService()
 </script>
 <template>
@@ -151,7 +175,7 @@ getSavedService()
       <div class="actions">
         <button type="submit" class="primary">Save</button>
         <button type="button" class="btn-ghost" v-on:click="$emit('closeForm')">Cancel</button>
-        <button type="button" class="delete">Delete</button>
+        <button type="button" class="delete" @click="deleteSavedService()">Delete</button>
       </div>
       
       
