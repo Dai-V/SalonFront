@@ -10,11 +10,14 @@ Technicians:
 + View 
 + Create
 + Edit
++ Search
 
 Saved Services:
 + View
 + Create
 + Edit
++ Delete
++ Search
 
 Authentication:
 + Login
@@ -26,12 +29,7 @@ Todos:
 Appointment:
 + Searchable dropdown for customer while making appointment
 
-Saved Services:
-+ Search
-+ Delete
 
-Technicians:
-+ Search
 
 Customers:
 + Search

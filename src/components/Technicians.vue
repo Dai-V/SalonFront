@@ -11,6 +11,7 @@ const techList = ref ([])
 const showTechnicianForm = ref(false)
 const techIDEdit = ref(null)
 const showTechnicianEditForm = ref(false)
+const searchQuery = ref('')
 function getTechnicians() {
      fetch("http://127.0.0.1:8000/api/technicians/", { 
         credentials: 'include',
@@ -33,12 +34,36 @@ function openTechnicianEditForm(techID) {
     showTechnicianEditForm.value=!showTechnicianEditForm.value
     techIDEdit.value = techID
 }
+
+function search() {
+  if (searchQuery.value === '')
+      {
+        getTechnicians()
+      }
+  else {
+    techList.value = techList.value.filter(x => x.TechName.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+  x.TechPhone.includes(searchQuery.value) || 
+    (x.TechEmail?x.TechEmail:'').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+  (x.TechInfo?x.TechInfo:'').toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+  (x.TechID).toString().includes(searchQuery.value.toLowerCase())
+)
+  }
+}
+
 getTechnicians()
 </script>
 
 <template>
 <TechnicianForm v-if="showTechnicianForm" @close-form="showTechnicianForm=!showTechnicianForm" :callReload="getTechnicians" />
 <TechnicianEditForm v-if="showTechnicianEditForm" @close-form="showTechnicianEditForm=!showTechnicianEditForm" :techID="techIDEdit" :callReload="getTechnicians"/>
+  <div class="search-bar">
+    <input
+      type="text"
+      placeholder="Search..."
+      v-model="searchQuery"
+      @input="search()"
+    />
+  </div>
 <table class="data-table">
 <thead>
    <tr>
@@ -93,5 +118,27 @@ getTechnicians()
 
 .data-table tbody tr:hover {
   background-color: #e0e0e0; /* Hover effect for rows */
+}
+
+.search-bar {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  flex-grow: 1;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-bar button {
+  padding: 8px 12px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 </style>
