@@ -11,6 +11,7 @@ Technicians:
 + Create
 + Edit
 + Search
++ Add Schedule 
 
 Saved Services:
 + View
@@ -41,8 +42,6 @@ Customers:
 Technicians:
 + Past Services
 
-Schedule:
-+ Add Schedule 
 
 Dashboard Totals/Reports:
 + View totals within a range (including single date)

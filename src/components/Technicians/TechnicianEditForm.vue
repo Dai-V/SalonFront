@@ -2,6 +2,7 @@
 import {ref,defineEmits} from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import TechnicianScheduleForm from './TechnicianScheduleForm.vue';
+import PastServices from './PastServices.vue';
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
@@ -19,6 +20,7 @@ const nameError = ref('')
 const emailError = ref('')
 const infoError = ref('')
 const phoneError = ref('')
+const showPastServices = ref(false)
 
 function getTechnician(){
     fetch('http://127.0.0.1:8000/api/technicians/'+props.techID+'/', { 
@@ -72,13 +74,23 @@ function appSubmit() {
 function addSchedule() {
  showScheduleForm.value=!showScheduleForm.value
 }
+
+function viewPastServices() {
+  showPastServices.value=!viewPastServices.value
+}
 getTechnician()
 </script>
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
   <TechnicianScheduleForm v-if="showScheduleForm" :techID="props.techID" :techName="techName" @close-form="showScheduleForm=!showScheduleForm"/>
+  <PastServices v-if="showPastServices" @close-form="showPastServices=!showPastServices" :techID="props.techID"/>
   <div class="modal-card">
-    <h2 id="modalTitle">Edit Technician</h2>   <button class="secondary" style="float:right" @click="addSchedule()">Add Schedule</button>
+    <h2 id="modalTitle">Edit Technician</h2>
+       <div style="float:right; margin-top:-45px">
+         <button class="secondary"  @click="addSchedule()">Edit Schedule</button> <br></br>
+         <button class="secondary" @click="viewPastServices()">Past Services</button>
+      </div>
+     
     <form id="bookingForm" @submit.prevent="appSubmit()">
         <div>
           <label>Name</label>
@@ -115,7 +127,7 @@ getTechnician()
 
 <style scoped>
 button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
-button.secondary { background:#10b981; color:#fff; border:none; padding:10px 14px; margin-top: -35px; border-radius:8px; cursor:pointer; }
+button.secondary { background:lightblue; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; margin-top: 10px; width: 150px;}
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
 .modal-card { width:600px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:25px; }
