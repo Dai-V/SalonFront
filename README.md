@@ -35,6 +35,12 @@ Todos:
 Appointment:
 + Searchable dropdown for customer while making appointment
 
+Customers:
++ Standing Appointments
+
+Technicians:
++ Past Services
+
 Schedule:
 + Add Schedule 
 

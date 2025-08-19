@@ -1,6 +1,7 @@
 <script setup>
 import {ref,defineEmits} from 'vue'
 import { useAuthStore } from '../../stores/auth'
+import TechnicianScheduleForm from './TechnicianScheduleForm.vue';
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
@@ -13,6 +14,11 @@ const techName = ref('')
 const techEmail = ref('')
 const techPhone = ref('')
 const techInfo = ref('')
+const showScheduleForm = ref(false)
+const nameError = ref('')
+const emailError = ref('')
+const infoError = ref('')
+const phoneError = ref('')
 
 function getTechnician(){
     fetch('http://127.0.0.1:8000/api/technicians/'+props.techID+'/', { 
@@ -63,12 +69,16 @@ function appSubmit() {
         emit('closeForm')
     });
 }
+function addSchedule() {
+ showScheduleForm.value=!showScheduleForm.value
+}
 getTechnician()
 </script>
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <TechnicianScheduleForm v-if="showScheduleForm" :techID="props.techID" :techName="techName" @close-form="showScheduleForm=!showScheduleForm"/>
   <div class="modal-card">
-    <h2 id="modalTitle">Add Technician</h2>
+    <h2 id="modalTitle">Edit Technician</h2>   <button class="secondary" style="float:right" @click="addSchedule()">Add Schedule</button>
     <form id="bookingForm" @submit.prevent="appSubmit()">
         <div>
           <label>Name</label>
@@ -105,6 +115,7 @@ getTechnician()
 
 <style scoped>
 button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+button.secondary { background:#10b981; color:#fff; border:none; padding:10px 14px; margin-top: -35px; border-radius:8px; cursor:pointer; }
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; }
 .modal-card { width:600px; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:25px; }

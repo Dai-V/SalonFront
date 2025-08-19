@@ -12,7 +12,9 @@ const currentDisplayedDate2 = ref(new Date());
 const tzoffset = (new Date()).getTimezoneOffset() * 60000; //offset in milliseconds 
 const formattedDate1 = ref(new Date(currentDisplayedDate1.value - tzoffset).toISOString().slice(0, -1).split('T')[0]); // get correct date
 const formattedDate2 = ref(new Date(currentDisplayedDate2.value - tzoffset).toISOString().slice(0, -1).split('T')[0]); // get correct date
+
 watch(currentDisplayedDate1, (newValue) => {
+currentDisplayedDate2.value = currentDisplayedDate1.value
   reload()
 });
 watch(currentDisplayedDate2, (newValue) => {
@@ -143,16 +145,25 @@ const configTotalsByServices = ref({
     });
 const datasetServicesByTechnicians = ref([
     {
-        name: 'KPI 1',
-        value: 96.66,
+        name: 'No Technician Scheduled for this date range',
+        value: 0,
         color: '#6376DD',
         prefix: '',
-        suffix: '%',
+        suffix: '',
         rounding: 1,
     },
 ]);
 
-const datasetTotalsByServices = ref([]);
+const datasetTotalsByServices = ref([
+     {
+        name: 'No service yet',
+        value: '',
+        color: '#6376DD',
+        prefix: '',
+        suffix: '',
+        rounding: 1,
+    },
+]);
 const techServices = ref([])
 const totalByServices = ref([])
 function getTotals(StartDate,EndDate) {
@@ -182,13 +193,18 @@ function getTotals(StartDate,EndDate) {
                 rounding: 1
             })
         }
+        if (total.value.TotalEarnings>0)
         configServicesByTechnicians.value.style.layout.target = total.value.TotalEarnings
+        else {
+              configServicesByTechnicians.value.style.layout.target=100
+        }
 
         // get Totals By Services
         totalByServices.value = total.value.TotalsByServices
-        datasetTotalsByServices.value = []
+        
         console.log(totalByServices.value)
         for (var i in totalByServices.value) {
+            datasetTotalsByServices.value = []
             datasetTotalsByServices.value.push({
                 name: totalByServices.value[i].ServiceName + " - Services: " + totalByServices.value[i].TotalServices + " - Earnings: ",
                 value: totalByServices.value[i].TotalPayments,
@@ -198,7 +214,11 @@ function getTotals(StartDate,EndDate) {
                 rounding: 1
             })
         }
+         if (total.value.TotalEarnings>0)
         configTotalsByServices.value.style.layout.target = total.value.TotalEarnings
+        else {
+              configTotalsByServices.value.style.layout.target=100
+        }
 
       
 
@@ -214,7 +234,7 @@ getTotals(formattedDate1.value,formattedDate2.value)
 <template>
    <div class="header">
    <DatePicker v-model="currentDisplayedDate1" style="margin-right:20px" is-required />
-   <DatePicker v-model="currentDisplayedDate2" is-required />
+   <DatePicker v-model="currentDisplayedDate2" is-required :min-date='currentDisplayedDate1'/>
    </div>
       <div class="two-column-layout">
         <div class="column-left">
@@ -233,6 +253,7 @@ getTotals(formattedDate1.value,formattedDate2.value)
         <div class="column-left">
             <div >
                 <VueUiSparkbar
+                v-if ="datasetTotalsByServices!==[]"
                     :config="configTotalsByServices"
                     :dataset="datasetTotalsByServices"
                 />
