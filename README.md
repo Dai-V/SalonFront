@@ -12,6 +12,8 @@ Technicians:
 + Edit
 + Search
 + Add Schedule 
++ Standing Services
++ Past Services
 
 Saved Services:
 + View
@@ -25,6 +27,11 @@ Customers:
 + View
 + Create
 + Edit 
++ Standing Services
++ Past Services
+
+Dashboard Totals/Reports:
++ View totals within a range (including single date)
 
 Authentication:
 + Login
@@ -36,13 +43,8 @@ Todos:
 Appointment:
 + Searchable dropdown for customer while making appointment
 
-Customers:
-+ Standing Appointments
-
-Technicians:
-+ Past Services
-
-
 Dashboard Totals/Reports:
-+ View totals within a range (including single date)
++ More reports for Dashboard
++ Customizable Dashboard
+
 

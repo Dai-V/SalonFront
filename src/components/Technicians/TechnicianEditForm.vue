@@ -2,7 +2,8 @@
 import {ref,defineEmits} from 'vue'
 import { useAuthStore } from '../../stores/auth'
 import TechnicianScheduleForm from './TechnicianScheduleForm.vue';
-import PastServices from './PastServices.vue';
+import PastServices from './TechnicianServices.vue';
+import TechnicianServices from './TechnicianServices.vue';
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
@@ -20,7 +21,7 @@ const nameError = ref('')
 const emailError = ref('')
 const infoError = ref('')
 const phoneError = ref('')
-const showPastServices = ref(false)
+const showTechServices = ref(false)
 
 function getTechnician(){
     fetch('http://127.0.0.1:8000/api/technicians/'+props.techID+'/', { 
@@ -75,20 +76,20 @@ function addSchedule() {
  showScheduleForm.value=!showScheduleForm.value
 }
 
-function viewPastServices() {
-  showPastServices.value=!viewPastServices.value
+function viewTechServices() {
+  showTechServices.value=!showTechServices.value
 }
 getTechnician()
 </script>
 <template>
 <div id="bookingModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <TechnicianServices v-if="showTechServices" @close-form="showTechServices=!showTechServices" :techID="props.techID"/>
   <TechnicianScheduleForm v-if="showScheduleForm" :techID="props.techID" :techName="techName" @close-form="showScheduleForm=!showScheduleForm"/>
-  <PastServices v-if="showPastServices" @close-form="showPastServices=!showPastServices" :techID="props.techID"/>
   <div class="modal-card">
     <h2 id="modalTitle">Edit Technician</h2>
        <div style="float:right; margin-top:-45px">
+         <button class="secondary" @click="viewTechServices()">Services</button><br></br>
          <button class="secondary"  @click="addSchedule()">Edit Schedule</button> <br></br>
-         <button class="secondary" @click="viewPastServices()">Past Services</button>
       </div>
      
     <form id="bookingForm" @submit.prevent="appSubmit()">

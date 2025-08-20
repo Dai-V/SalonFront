@@ -7,6 +7,9 @@ techID:Number,
 })
 const apps = ref([])
 const customers = ref([])
+const appStatus = ref('Closed') // Past Services by default
+const isActive1 = ref(true);
+
 function getCustomers() {
     fetch("http://127.0.0.1:8000/api/customers/", { 
         credentials: 'include',
@@ -30,10 +33,15 @@ getCustomers()
 <template>
 <div class="modal">
 <div class="modal-card">
+<div style="margin-bottom: 10px;">
+<button type="button" :class="{ 'highlightedBtn': isActive1 }" class="btn-ghost" v-on:click="appStatus='Closed';isActive1=true">Past Services</button>
+<button type="button" :class="{ 'highlightedBtn': !isActive1 }"class="btn-ghost" v-on:click="appStatus='Open';isActive1=false;">Standing Services</button>
+</div>
 <table class="data-table">
 <thead>
    <tr>
         <th> Date </th>
+        <th> Start Time </th>
         <th> Service Name </th>
         <th> Customer Name </th>
         <th> Price </th>
@@ -44,10 +52,11 @@ getCustomers()
     <template v-for="customer in customers">
     <template v-for="app in customer.Appointments">
     <template v-for="service in app.Services">
-    <tr v-if="props.techID == service.TechID" @click="">
+    <tr v-if="props.techID == service.TechID && app.AppStatus==appStatus" @click="">
         <td> {{app.AppDate}} </td>
+        <td> {{service.ServiceStartTime}} </td>
         <td> {{service.ServiceName}} </td>
-        <td> {{customer.CustomerFirstName}} </td>
+        <td> {{service.TechID}} </td>
         <td> {{service.ServicePrice}} </td>
         <td> {{service.ServiceDuration}} </td>
     </tr>
@@ -68,13 +77,13 @@ button.primary { background:#10b981; color:#fff; border:none; padding:10px 14px;
 button.secondary { background:lightblue; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; margin-top: 10px; width: 150px;}
 .modal { display:flex; position:fixed; inset:0; background:rgba(2,6,23,0.6); z-index:1000; align-items:center; justify-content:center; 
 }
-.modal-card { width:600PX; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
+.modal-card { width:700PX; background:#fff; border-radius:14px; padding:18px; box-shadow:0 18px 60px rgba(2,6,23,0.25); }
 h2 { margin:0 0 8px 0; font-size:25px; }
 .grid { display:grid; grid-template-columns: 1fr 120px; gap:10px; align-items:center; }
 label { display:block;width:100%; font-size:18px; color:#334155; }
 input, select, textarea { display:inline-block;width:30%; padding:8px 10px 10px 10px; border-radius:8px; border:1px solid #e6eef7; background:#f0f0f0; }
 .actions { display:flex; gap:8px; margin-top:14px; justify-content:flex-start; }
-.btn-ghost { background:transparent; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; }
+.btn-ghost { background:transparent; border:1px solid #e6eef7; padding:8px 12px; border-radius:10px; cursor:pointer; margin-right:10px }
 .add-btn { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; }
 .small { font-size:13px; color:#64748b; margin-top:6px; }
 
@@ -84,7 +93,7 @@ input, select, textarea { display:inline-block;width:30%; padding:8px 10px 10px 
   display:block;
   width: 100%;
   height:500px;
-  overflow-y: scroll;
+  overflow: scroll;
   border-collapse: collapse; 
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
   margin:auto;
@@ -113,4 +122,8 @@ input, select, textarea { display:inline-block;width:30%; padding:8px 10px 10px 
 .data-table tbody tr:hover {
   background-color: #e0e0e0; /* Hover effect for rows */
 }
+
+.highlightedBtn {
+      background-color: #d0d0d0;
+    }
 </style>
