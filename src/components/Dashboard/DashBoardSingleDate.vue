@@ -201,10 +201,9 @@ function getTotals(StartDate,EndDate) {
 
         // get Totals By Services
         totalByServices.value = total.value.TotalsByServices
-        
         console.log(totalByServices.value)
+        datasetTotalsByServices.value = []
         for (var i in totalByServices.value) {
-            datasetTotalsByServices.value = []
             datasetTotalsByServices.value.push({
                 name: totalByServices.value[i].ServiceName + " - Services: " + totalByServices.value[i].TotalServices + " - Earnings: ",
                 value: totalByServices.value[i].TotalPayments,

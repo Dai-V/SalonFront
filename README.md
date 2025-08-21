@@ -5,6 +5,7 @@ Appointments:
 + Create appointment
 + Edit appointment
 + Cancel appointment (By setting status to Cancelled)
++ Searchable dropdown for customer while making appointment
 
 Technicians:
 + View 
@@ -40,8 +41,6 @@ Authentication:
 
 Todos:
 
-Appointment:
-+ Searchable dropdown for customer while making appointment
 
 Dashboard Totals/Reports:
 + More reports for Dashboard

@@ -2,6 +2,7 @@
 import {ref,defineEmits} from 'vue'
 import ServiceRow from './ServiceRow.vue'
 import { useAuthStore } from '../../stores/auth'
+import Multiselect from 'vue-multiselect'
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
@@ -21,7 +22,7 @@ const appComment = ref("");
 const appStatus = ref("Open");
 const appTotal = ref(0);
 const paymentType =ref("Visa");
-const customerID = ref("1")
+const selectedCustomer = ref(null)
 const customerList = ref('')
 let serviceID = 0;
 
@@ -78,7 +79,7 @@ function appSubmit() {
       AppDate: appDate.value,
       AppStatus: appStatus.value,
       PaymentType: paymentType.value,
-      CustomerID: customerID.value,
+      CustomerID: selectedCustomer.value.CustomerID,
       Services: []
 
     };
@@ -119,6 +120,11 @@ function appSubmit() {
       });
 }
 getCustomerList()
+
+function fullNameWithPhone({CustomerFirstName,CustomerLastName,CustomerPhone}){
+  return `${CustomerFirstName} ${CustomerLastName} ${CustomerPhone}`
+}
+
 </script>
 
 <template>
@@ -129,10 +135,8 @@ getCustomerList()
        <div class="grid">
         <div>
           <label>Customer</label>
-          <select v-model="customerID" type="number" required>
-            <option  v-for="customer in customerList" :value="customer.CustomerID"> {{ customer.CustomerFirstName }} {{customer.CustomerLastName }} {{customer.CustomerPhone}}</option>
-            
-          </select>
+          <multiselect v-model="selectedCustomer" :custom-label="fullNameWithPhone" :options="customerList" placeholder="Select one" 
+                 track-by="CustomerID" :allow-empty="false":required="true" ></multiselect>
         </div>
         
       </div>
@@ -209,3 +213,4 @@ input, select, textarea { width:90%; padding:8px 10px; border-radius:8px; border
 
 
 </style>
+<style src="vue-multiselect/dist/vue-multiselect.min.css"></style>

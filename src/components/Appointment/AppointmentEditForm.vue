@@ -2,6 +2,7 @@
 import {ref,defineEmits} from 'vue'
 import ServiceRow from './ServiceRow.vue'
 import { useAuthStore } from '../../stores/auth'
+import Multiselect from 'vue-multiselect'
 
 const emit = defineEmits(['closeForm'])
 const props = defineProps({
@@ -19,8 +20,8 @@ const appComment = ref("");
 const appStatus = ref("Open");
 const appTotal = ref(0);
 const paymentType =ref("Visa");
-const customerID = ref(props.customerID)
 const customerList = ref('')
+const selectedCustomer = ref(null)
 
 
 let serviceID = 0;
@@ -37,6 +38,12 @@ function getCustomerList() {
       .then(response => response.json())
       .then(data => {
         customerList.value = data
+        for (let i in customerList.value){
+          if (customerList.value[i].CustomerID === props.customerID)
+            {
+          selectedCustomer.value = customerList.value[i]
+            }
+        }
 
       })
       .catch(error => {
@@ -126,7 +133,7 @@ function appSubmit() {
       AppDate: appDate.value,
       AppStatus: appStatus.value,
       PaymentType: paymentType.value,
-      CustomerID: customerID.value,
+      CustomerID: selectedCustomer.value.CustomerID,
       Services: []
 
     };
@@ -167,6 +174,9 @@ function appSubmit() {
 }
 getAppointment()
 getCustomerList()
+function fullNameWithPhone({CustomerFirstName,CustomerLastName,CustomerPhone}){
+  return `${CustomerFirstName} ${CustomerLastName} ${CustomerPhone}`
+}
 </script>
 
 <template>
@@ -177,12 +187,8 @@ getCustomerList()
        <div class="grid">
         <div>
           <label>Customer</label>
-          <select v-model="customerID" type="number" required>
-            <option  v-for="customer in customerList" :value="customer.CustomerID">
-               {{ customer.CustomerFirstName }} {{customer.CustomerLastName }} {{customer.CustomerPhone}}
-            </option>
-            
-          </select>
+            <multiselect id="single-select-search" v-model="selectedCustomer" :custom-label="fullNameWithPhone" :options="customerList" placeholder="Select one" 
+                 track-by="CustomerID" :allow-empty="false" :required="true"></multiselect>
         </div>
         
       </div>

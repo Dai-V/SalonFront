@@ -22,6 +22,7 @@ function checkIsLoggedIn()
         .then(response => {
            if (response.status === 401 || response.status === 403) {
                 authStore.logout
+                router.push('/login')
             } else if (response.status === 200) {
              authStore.login(response.headers.get("x-csrftoken"))
             }

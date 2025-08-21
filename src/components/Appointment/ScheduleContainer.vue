@@ -147,6 +147,7 @@ function openAppointmentEditForm(appID,customerID)
     width:100%;
     border: 1px solid #ccc;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    border-radius: 10px;
 }
 
 .schedule-header {
