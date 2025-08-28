@@ -157,6 +157,8 @@ function openAppointmentEditForm(appID,customerID)
     padding: 15px;
     background-color: #f0f0f0;
     border-bottom: 1px solid #eee;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
 }
 
 .schedule-grid {

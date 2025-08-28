@@ -10,6 +10,7 @@ import Technicians from './components/Technicians/Technicians.vue'
 import SavedServices from './components/Saved Services/SavedServices.vue'
 import Customers from './components/Customers/Customers.vue'
 import Dashboard from './components/Dashboard/DashBoardSingleDate.vue'
+import Totals from './components/Totals/Totals.vue'
 const pinia = createPinia()
 const routes = [
   { path: '/', name:'Dashboard', component: Dashboard,  meta: { icon: '📊'  }},
@@ -20,6 +21,7 @@ const routes = [
  { path: '/customers', name:'Customers',component: Customers ,  meta: { icon: '🧑‍🤝‍🧑' }},
   { path: '/login', name:'Login' ,component: LoginForm,  meta: { icon:'🔑' } },
     { path: '/signup', name:'Signup' ,component: SignupForm,  meta: { icon:'🔑' } },
+       { path: '/totals', name:'Totals' ,component: Totals,  meta: { icon:'💵' } },
 ]
 
 const router = createRouter({

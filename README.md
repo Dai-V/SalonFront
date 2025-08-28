@@ -31,7 +31,7 @@ Customers:
 + Standing Services
 + Past Services
 
-Dashboard Totals/Reports:
+Totals/Reports:
 + View totals within a range (including single date)
 
 Authentication:
@@ -42,8 +42,7 @@ Authentication:
 Todos:
 
 
-Dashboard Totals/Reports:
-+ More reports for Dashboard
+Dashboard:
 + Customizable Dashboard
 
 

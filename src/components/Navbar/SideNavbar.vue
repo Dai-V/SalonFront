@@ -146,7 +146,6 @@ nav ul {
 
 nav li {
   margin-bottom: 15px;
-  border-bottom:1px solid;
 }
 
 nav a {
@@ -170,6 +169,6 @@ nav a:hover {
 }
 
 .router-link-exact-active {
-        background-color: rgb(90, 126, 205);
+        background-color: rgb(118, 153, 230);
     }
 </style>

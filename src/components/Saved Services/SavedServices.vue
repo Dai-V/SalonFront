@@ -93,6 +93,7 @@ function openSavedServicesEditForm(ServiceID) {
   width: 100%;
   border-collapse: collapse; 
   box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  border: 1px solid #ccc;
 }
 .add-btn { background:#10b981; color:white; border:none; padding:8px 10px; border-radius:10px; cursor:pointer; margin-top:10px }
 
@@ -101,6 +102,7 @@ function openSavedServicesEditForm(ServiceID) {
   padding: 15px; /* Adds padding inside cells */
   text-align: left; /* Aligns text to the left */
   cursor:pointer;
+
   
 }
 
