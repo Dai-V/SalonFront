@@ -47,7 +47,7 @@ function logoutClick(){
         })
         .then(data => {
              authStore.logout
-             router.push('/login')
+             location.reload()
         })
         .catch(error => {
             console.error('Error fetching data:', error);
@@ -80,17 +80,17 @@ function logoutClick(){
     </li>
          <div v-else>
           <li style="position:absolute;bottom:50px;width:87%;cursor: pointer;">
-            <a @click="router.push('/signup')">
+            <router-link :to="'/signup'" :key="Signup">
             <div class="icon"> 🔑 </div>
             <span v-if="!isCollapsed" class="label">Sign Up</span>
-            </a>
+            </router-link>
             
           </li>
           <li style="position:absolute;bottom:110px;width:87%;cursor: pointer;">
-            <a @click="router.push('/login')">
+            <router-link :to="'/login'" :key="Login">
             <div class="icon"> 🔑 </div>
             <span v-if="!isCollapsed" class="label">Login</span>
-            </a>
+            </router-link>
             
           </li>
          </div>
@@ -146,8 +146,7 @@ nav ul {
 
 nav li {
   margin-bottom: 15px;
-  border: 5px;
-  border-style: groove;
+  border-bottom:1px solid;
 }
 
 nav a {
@@ -169,4 +168,8 @@ nav a:hover {
   text-align: center;
   margin-right: 8px;
 }
+
+.router-link-exact-active {
+        background-color: rgb(90, 126, 205);
+    }
 </style>
