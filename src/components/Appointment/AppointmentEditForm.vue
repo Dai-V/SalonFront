@@ -216,8 +216,11 @@ function fullNameWithPhone({CustomerFirstName,CustomerLastName,CustomerPhone}){
           <label for="PaymentType">Payment Type</label>
           <select v-model="paymentType" id="PaymentType" name="PaymentType">
             <option>Cash</option>
+            <option>Venmo</option>
+            <option>Zelle</option>
             <option>Visa</option>
             <option>Mastercard</option>
+
           </select>
         </div>
       </div>
